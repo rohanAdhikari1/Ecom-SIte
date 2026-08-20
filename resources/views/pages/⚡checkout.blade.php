@@ -154,10 +154,12 @@ new class extends Component
             $this->deliveryLng = $this->shopLng;
         }
 
+        $wantsAccount = $this->createAccount && ! auth()->check();
+
         $data = $this->validate([
             'customerName' => 'required|string|max:255',
             'phone' => ['required', 'regex:/^(97|98)[0-9]{8}$/'],
-            'email' => 'nullable|email',
+            'email' => $wantsAccount ? ['required', 'email', 'unique:users,email'] : 'nullable|email',
             'deliveryMethod' => 'required|in:delivery,pickup',
             'deliveryAddress' => 'required|string|max:500',
             'deliveryAreaId' => $isPickup ? 'nullable' : 'required|exists:delivery_areas,id',
@@ -165,9 +167,10 @@ new class extends Component
             'deliveryTimeSlot' => 'required|string',
             'paymentMethod' => 'required|in:cod,esewa',
             'notes' => 'nullable|string|max:500',
-            'password' => $this->createAccount && ! auth()->check() ? 'required|min:8' : 'nullable',
+            'password' => $wantsAccount ? 'required|min:8' : 'nullable',
         ], [
             'phone.regex' => 'Enter a valid Nepali mobile number (e.g. 98XXXXXXXX).',
+            'email.unique' => 'An account with this email already exists. Please log in first.',
         ]);
 
         if ($this->paymentMethod === 'esewa' && ! $this->esewaEnabled) {
@@ -243,7 +246,10 @@ new class extends Component
                         @error('phone') <p class="mt-1 text-xs text-rose-brand-600">{{ $message }}</p> @enderror
                     </div>
                     <div>
-                        <label class="text-sm font-medium text-ink/80">Email <span class="text-ink/40">(optional)</span></label>
+                        <label class="text-sm font-medium text-ink/80">
+                            Email
+                            <span class="text-ink/40">{{ $createAccount ? '(required to create an account)' : '(optional)' }}</span>
+                        </label>
                         <input type="email" wire:model="email" class="mt-1 w-full rounded-xl border border-brand-100 px-3 py-2.5 text-sm focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-200">
                         @error('email') <p class="mt-1 text-xs text-rose-brand-600">{{ $message }}</p> @enderror
                     </div>

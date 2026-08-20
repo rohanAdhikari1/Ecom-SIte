@@ -174,9 +174,9 @@ class ViewOrder extends ViewRecord
                     Textarea::make('note')
                         ->label('Note (optional)'),
                 ])
-                ->fillForm(fn (Order $record) => ['status' => $record->status])
+                ->fillForm(fn (Order $record) => ['status' => $record->status->value])
                 ->action(function (Order $record, array $data): void {
-                    $record->updateStatus(OrderStatus::from($data['status']), $data['note'] ?: null);
+                    $record->updateStatus($data['status'], $data['note'] ?: null);
 
                     Notification::make()
                         ->title('Order status updated')

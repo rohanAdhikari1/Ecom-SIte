@@ -8,6 +8,7 @@
     $mapsUrl = \App\Models\Setting::get('shop_google_maps_url');
     $facebook = \App\Models\Setting::get('facebook_url');
     $instagram = \App\Models\Setting::get('instagram_url');
+    $esewaEnabled = (bool) \App\Models\Setting::get('esewa_enabled', false);
 @endphp
 
 <footer class="relative mt-16 overflow-hidden bg-brand-950 text-white/70">
@@ -128,9 +129,22 @@
         <div>
             <h3 class="font-display text-xs font-semibold tracking-widest text-white/90 uppercase">We Accept</h3>
             <div class="mt-4 flex flex-wrap gap-2">
-                <span class="rounded-lg bg-white/5 px-3 py-2 text-xs font-medium text-white/70">💵 Cash on
-                    Delivery</span>
-                <span class="rounded-lg bg-white/5 px-3 py-2 text-xs font-medium text-white/70">📱 eSewa (soon)</span>
+                <span class="inline-flex items-center gap-1.5 rounded-lg bg-white/5 px-3 py-2 text-xs font-medium text-white/70">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-brand-400" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3M3.75 6h16.5a1.5 1.5 0 0 1 1.5 1.5v9a1.5 1.5 0 0 1-1.5 1.5H3.75a1.5 1.5 0 0 1-1.5-1.5v-9a1.5 1.5 0 0 1 1.5-1.5Z" />
+                    </svg>
+                    Cash on Delivery
+                </span>
+                <span class="inline-flex items-center gap-2 rounded-lg px-3 py-2 text-xs font-medium {{ $esewaEnabled ? 'bg-white text-[#154734]' : 'bg-white/5 text-white/50' }}">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="h-4 w-4 shrink-0">
+                        <circle cx="12" cy="12" r="12" fill="{{ $esewaEnabled ? '#60bb46' : 'currentColor' }}" />
+                        <text x="12" y="16.8" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="14" font-style="italic" font-weight="bold" fill="{{ $esewaEnabled ? '#ffffff' : '#9ca3af' }}">e</text>
+                    </svg>
+                    <span class="font-semibold">eSewa</span>
+                    @unless ($esewaEnabled)
+                        <span class="font-normal">(coming soon)</span>
+                    @endunless
+                </span>
             </div>
             <p class="mt-6 text-xs text-white/40">Secure ordering, fresh ingredients, and a happiness guarantee on every
                 cake.</p>

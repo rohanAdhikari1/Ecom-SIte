@@ -40,3 +40,14 @@ test('the advance action is hidden once an order is delivered', function () {
         ->test(ListOrders::class, ['activeTab' => 'all'])
         ->assertTableActionHidden('advance', $order);
 });
+
+test('the change status modal can be submitted without altering the pre-filled status', function () {
+    $order = Order::factory()->create(['status' => OrderStatus::Confirmed]);
+
+    Livewire::actingAs($this->admin)
+        ->test(ListOrders::class)
+        ->callTableAction('changeStatus', $order, data: ['note' => 'No change, just adding a note.']);
+
+    expect($order->fresh()->status)->toBe(OrderStatus::Confirmed);
+    expect($order->fresh()->statusHistories->last()->note)->toBe('No change, just adding a note.');
+});

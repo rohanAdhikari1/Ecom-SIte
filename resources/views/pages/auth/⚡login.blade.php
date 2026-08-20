@@ -1,6 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Str;
 use Livewire\Attributes\Validate;
 use Livewire\Component;
 
@@ -18,11 +20,25 @@ new class extends Component
     {
         $this->validate();
 
+        $throttleKey = Str::transliterate(Str::lower($this->email)).'|'.request()->ip();
+
+        if (RateLimiter::tooManyAttempts($throttleKey, 5)) {
+            $seconds = RateLimiter::availableIn($throttleKey);
+
+            $this->addError('email', "Too many login attempts. Please try again in {$seconds} seconds.");
+
+            return;
+        }
+
         if (! Auth::attempt(['email' => $this->email, 'password' => $this->password], $this->remember)) {
+            RateLimiter::hit($throttleKey, 60);
+
             $this->addError('email', 'These credentials do not match our records.');
 
             return;
         }
+
+        RateLimiter::clear($throttleKey);
 
         request()->session()->regenerate();
 

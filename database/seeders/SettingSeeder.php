@@ -40,7 +40,7 @@ class SettingSeeder extends Seeder
             'why_choose_us' => json_encode([
                 ['icon' => '🎨', 'title' => 'Fully Customisable', 'body' => 'Pick your weight, flavour, and add a free message on every cake.'],
                 ['icon' => '🚴', 'title' => 'Same-Day Delivery', 'body' => 'Order before 4 PM and get it delivered fresh across Biratnagar.'],
-                ['icon' => '💵', 'title' => 'Cash on Delivery', 'body' => 'Pay when your cake arrives — eSewa payment coming soon.'],
+                ['icon' => '💵', 'title' => 'Flexible Payment', 'body' => 'Pay with Cash on Delivery, or securely online via eSewa.'],
             ]),
         ];
 

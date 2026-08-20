@@ -3,7 +3,7 @@
 <a
     href="{{ route('product.show', $product) }}"
     wire:navigate
-    class="group flex translate-y-0 flex-col overflow-hidden rounded-2xl border border-brand-100 bg-white opacity-100 shadow-sm transition-all duration-500 starting:translate-y-4 starting:opacity-0 hover:-translate-y-1 hover:shadow-xl hover:shadow-brand-900/10"
+    class="group flex h-full flex-col overflow-hidden rounded-2xl border border-brand-100 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1.5 hover:border-brand-200 hover:shadow-xl hover:shadow-brand-900/10"
 >
     <div class="relative aspect-square overflow-hidden bg-brand-50">
         @if ($product->cover_image)
@@ -39,7 +39,7 @@
             <span class="text-sm font-semibold text-brand-700">
                 From {{ \App\Support\Money::format($product->base_price) }}
             </span>
-            <span class="flex h-8 w-8 items-center justify-center rounded-full bg-brand-50 text-brand-600 transition group-hover:bg-brand-600 group-hover:text-white">
+            <span class="flex h-8 w-8 items-center justify-center rounded-full bg-brand-50 text-brand-600 transition duration-300 group-hover:scale-110 group-hover:bg-brand-600 group-hover:text-white">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M17.25 8.25 21 12m0 0-3.75 3.75M21 12H3" />
                 </svg>

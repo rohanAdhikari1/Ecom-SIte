@@ -2,6 +2,7 @@
 
 use App\Models\Order;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\RateLimiter;
 use Livewire\Component;
 
 new class extends Component
@@ -23,12 +24,40 @@ new class extends Component
         }
     }
 
+    /**
+     * Polled every few seconds so status changes (e.g. an admin marking an
+     * order out for delivery) show up live without the customer refreshing
+     * the page — plain HTTP polling, no websocket/broadcasting setup needed.
+     */
+    public function refreshTracking(): void
+    {
+        if (auth()->check()) {
+            $this->myOrders = auth()->user()->orders()->with(['statusHistories', 'items'])->latest()->get();
+        }
+
+        if ($this->order) {
+            $this->order = $this->order->fresh(['statusHistories', 'items']);
+        }
+    }
+
     public function search(): void
     {
         $this->validate([
             'orderNumber' => 'required|string',
             'phone' => 'required|string',
         ]);
+
+        $throttleKey = 'order-track|'.request()->ip();
+
+        if (RateLimiter::tooManyAttempts($throttleKey, 10)) {
+            $seconds = RateLimiter::availableIn($throttleKey);
+
+            $this->addError('orderNumber', "Too many lookup attempts. Please try again in {$seconds} seconds.");
+
+            return;
+        }
+
+        RateLimiter::hit($throttleKey, 60);
 
         $this->searched = true;
 
@@ -55,10 +84,10 @@ new class extends Component
 
     @auth
         @if ($myOrders->isNotEmpty())
-            <div class="mt-8 flex flex-col gap-6">
-                @foreach ($myOrders as $order)
-                    <div id="order-{{ $order->id }}" class="scroll-mt-24">
-                        <x-order-tracker :order="$order" />
+            <div wire:poll.15s.visible="refreshTracking" class="mt-8 flex flex-col gap-6">
+                @foreach ($myOrders as $userOrder)
+                    <div id="order-{{ $userOrder->id }}" class="scroll-mt-24">
+                        <x-order-tracker :order="$userOrder" />
                     </div>
                 @endforeach
             </div>
@@ -96,7 +125,7 @@ new class extends Component
                 No order found with that order number and phone. Please check and try again.
             </div>
         @else
-            <div class="mt-8">
+            <div wire:poll.15s.visible="refreshTracking" class="mt-8">
                 <x-order-tracker :order="$order" />
             </div>
         @endif

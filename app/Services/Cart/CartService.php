@@ -25,7 +25,10 @@ class CartService
         ?string $message,
         int $quantity,
     ): void {
-        $addons = Addon::query()->active()->whereKey($addonIds)->get();
+        abort_unless($weightOption->product_id === $product->id, 422, 'Invalid weight option for this product.');
+        abort_unless($flavorOption === null || $flavorOption->product_id === $product->id, 422, 'Invalid flavor option for this product.');
+
+        $addons = $product->addons()->active()->whereKey($addonIds)->get();
 
         $unitPrice = $weightOption->price
             + ($flavorOption?->price_modifier ?? 0)

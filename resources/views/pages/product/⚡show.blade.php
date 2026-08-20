@@ -2,8 +2,6 @@
 
 use App\Models\Addon;
 use App\Models\Product;
-use App\Models\ProductFlavorOption;
-use App\Models\ProductWeightOption;
 use App\Services\Cart\CartService;
 use Livewire\Attributes\Computed;
 use Livewire\Component;
@@ -54,8 +52,10 @@ new class extends Component {
             'message' => 'nullable|string|max:' . $this->product->message_max_length,
         ]);
 
-        $weightOption = ProductWeightOption::query()->findOrFail($this->weightOptionId);
-        $flavorOption = $this->flavorOptionId ? ProductFlavorOption::query()->find($this->flavorOptionId) : null;
+        $weightOption = $this->product->weightOptions()->whereKey($this->weightOptionId)->firstOrFail();
+        $flavorOption = $this->flavorOptionId
+            ? $this->product->flavorOptions()->whereKey($this->flavorOptionId)->first()
+            : null;
 
         $cart->add($this->product, $weightOption, $flavorOption, $this->selectedAddonIds, $this->product->allows_message ? $this->message : null, $this->quantity);
 
@@ -69,21 +69,76 @@ new class extends Component {
 ?>
 
 <div class="mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:px-8">
-    <nav class="text-sm text-ink/50">
-        <a href="{{ route('shop') }}" wire:navigate class="hover:text-brand-600">Shop</a>
-        <span class="mx-1.5">/</span>
-        <a href="{{ route('shop.category', $product->category) }}" wire:navigate
-            class="hover:text-brand-600">{{ $product->category->name }}</a>
-        <span class="mx-1.5">/</span>
-        <span class="text-ink/80">{{ $product->name }}</span>
+    {{-- Full breadcrumb trail on every screen size — horizontally scrollable
+         with a hidden scrollbar and a fade mask so it never overflows or looks broken on mobile. --}}
+    <nav aria-label="Breadcrumb" class="relative">
+        <div class="no-scrollbar flex items-center gap-1.5 overflow-x-auto text-sm whitespace-nowrap text-ink/50">
+            <a href="{{ route('shop') }}" wire:navigate class="shrink-0 rounded-full px-2.5 py-1 transition hover:bg-brand-50 hover:text-brand-600">
+                Shop
+            </a>
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 shrink-0 text-ink/25" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+            </svg>
+            <a href="{{ route('shop.category', $product->category) }}" wire:navigate
+                class="shrink-0 rounded-full px-2.5 py-1 transition hover:bg-brand-50 hover:text-brand-600">
+                {{ $product->category->name }}
+            </a>
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 shrink-0 text-ink/25" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+            </svg>
+            <span class="shrink-0 rounded-full bg-brand-50 px-2.5 py-1 font-medium text-brand-700">{{ $product->name }}</span>
+        </div>
+        {{-- Fade mask hinting there's more to scroll, on narrow screens --}}
+        <div class="pointer-events-none absolute inset-y-0 right-0 w-8 bg-linear-to-l from-cream to-transparent sm:hidden"></div>
     </nav>
+
+    <div
+        x-data="{ showSticky: false }"
+        x-init="
+            let observer = new IntersectionObserver(([entry]) => { showSticky = !entry.isIntersecting }, { rootMargin: '-72px 0px 0px 0px', threshold: 0 });
+            observer.observe(document.getElementById('product-title'));
+        "
+    >
+        {{-- Sticky mini bar — appears once the main image/details scroll out of view --}}
+        <div
+            x-show="showSticky"
+            x-transition:enter="transition ease-out duration-300"
+            x-transition:enter-start="opacity-0 -translate-y-3"
+            x-transition:enter-end="opacity-100 translate-y-0"
+            x-transition:leave="transition ease-in duration-200"
+            x-transition:leave-start="opacity-100 translate-y-0"
+            x-transition:leave-end="opacity-0 -translate-y-3"
+            x-cloak
+            class="sticky top-20 z-30"
+        >
+            <div class="mx-auto flex max-w-6xl items-center justify-between gap-4 rounded-2xl border border-brand-100 bg-white/95 px-4 py-3 shadow-lg shadow-brand-900/10 backdrop-blur">
+                <div class="flex min-w-0 items-center gap-3">
+                    @if ($product->cover_image)
+                        <img src="{{ $product->cover_image }}" alt="" class="h-10 w-10 shrink-0 rounded-lg object-cover">
+                    @endif
+                    <p class="truncate font-display text-sm font-semibold text-ink sm:text-base">{{ $product->name }}</p>
+                </div>
+                <div class="flex shrink-0 items-center gap-3">
+                    <span class="hidden font-semibold text-brand-700 sm:inline">{{ \App\Support\Money::format($this->totalPrice) }}</span>
+                    <button
+                        type="submit"
+                        form="product-configurator-form"
+                        wire:loading.attr="disabled"
+                        wire:target="addToCart"
+                        class="rounded-full bg-brand-600 px-4 py-2 text-sm font-semibold text-white shadow transition hover:scale-105 hover:bg-brand-700 disabled:opacity-60"
+                    >
+                        Add to Cart
+                    </button>
+                </div>
+            </div>
+        </div>
 
     <div class="mt-6 grid gap-10 lg:grid-cols-2">
         {{-- Gallery --}}
-        <div x-data="{ active: 0, images: @js($product->gallery_images ?: [null]) }" class="flex flex-col gap-3">
-            <div class="aspect-square overflow-hidden rounded-3xl bg-brand-50">
+        <div data-reveal x-data="{ active: 0, images: @js($product->gallery_images ?: [null]) }" class="flex flex-col gap-3">
+            <div class="group aspect-square overflow-hidden rounded-3xl bg-brand-50 shadow-sm">
                 <template x-if="images[active]">
-                    <img :src="images[active]" class="h-full w-full object-cover" :alt="@js($product->name)">
+                    <img :src="images[active]" class="h-full w-full object-cover transition duration-700 group-hover:scale-105" :alt="@js($product->name)">
                 </template>
                 <template x-if="!images[active]">
                     <div class="flex h-full w-full items-center justify-center text-8xl">🎂</div>
@@ -93,8 +148,8 @@ new class extends Component {
             <div class="flex gap-2" x-show="images.length > 1">
                 <template x-for="(image, index) in images" :key="index">
                     <button x-on:click="active = index"
-                        :class="active === index ? 'border-brand-500' : 'border-transparent'"
-                        class="h-16 w-16 shrink-0 overflow-hidden rounded-xl border-2 bg-brand-50">
+                        :class="active === index ? 'border-brand-500 ring-2 ring-brand-200' : 'border-transparent hover:border-brand-200'"
+                        class="h-16 w-16 shrink-0 overflow-hidden rounded-xl border-2 bg-brand-50 transition">
                         <img :src="image" class="h-full w-full object-cover">
                     </button>
                 </template>
@@ -102,9 +157,9 @@ new class extends Component {
         </div>
 
         {{-- Details / configurator --}}
-        <div>
-            <p class="text-xs font-medium uppercase tracking-wide text-brand-500">{{ $product->category->name }}</p>
-            <h1 class="mt-1 font-display text-3xl font-semibold text-ink">{{ $product->name }}</h1>
+        <div data-reveal data-reveal-delay="2">
+            <p class="text-xs font-semibold tracking-wide text-brand-500 uppercase">{{ $product->category->name }}</p>
+            <h1 id="product-title" class="mt-1 font-display text-3xl font-semibold text-ink sm:text-4xl">{{ $product->name }}</h1>
 
             <div class="mt-2 flex items-center gap-2">
                 @if ($product->is_eggless)
@@ -116,11 +171,11 @@ new class extends Component {
                 <p class="mt-4 text-ink/70">{{ $product->description }}</p>
             @endif
 
-            <div class="mt-6 text-3xl font-semibold text-brand-700">
-                {{ \App\Support\Money::format($this->unitPrice) }}
+            <div class="mt-6 flex items-baseline gap-2 border-t border-b border-brand-100 py-4">
+                <span class="text-3xl font-bold text-brand-700">{{ \App\Support\Money::format($this->unitPrice) }}</span>
             </div>
 
-            <form wire:submit="addToCart" class="mt-6 flex flex-col gap-6">
+            <form id="product-configurator-form" wire:submit="addToCart" class="mt-6 flex flex-col gap-6">
                 {{-- Weight --}}
                 @if ($product->weightOptions->isNotEmpty())
                     <div>
@@ -222,5 +277,6 @@ new class extends Component {
                 </button>
             </form>
         </div>
+    </div>
     </div>
 </div>
