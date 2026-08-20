@@ -106,7 +106,7 @@ class Product extends Model implements HasMedia
 
     public function registerMediaCollections(): void
     {
-        $this->addMediaCollection('gallery');
+        $this->addMediaCollection('gallery')->useDisk('public');
     }
 
     protected function coverImage(): Attribute

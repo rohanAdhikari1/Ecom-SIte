@@ -27,7 +27,7 @@ class AdminPanelProvider extends PanelProvider
         return $panel
             ->default()
             ->id('admin')
-            ->path('admin')
+            ->path('crm')
             ->brandName('BRT Live Cake')
             ->favicon(asset('favicon-32.png'))
             ->login()

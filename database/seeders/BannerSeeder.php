@@ -16,6 +16,7 @@ class BannerSeeder extends Seeder
                 'cta_label' => 'Order Now',
                 'cta_url' => '/shop',
                 'sort_order' => 0,
+                'image' => 'chef-piping.jpg',
             ],
             [
                 'title' => 'Design Your Dream Cake',
@@ -23,6 +24,7 @@ class BannerSeeder extends Seeder
                 'cta_label' => 'Customise a Cake',
                 'cta_url' => '/shop',
                 'sort_order' => 1,
+                'image' => 'wedding-rose-pink.jpg',
             ],
             [
                 'title' => 'Same-Day Delivery Across Biratnagar',
@@ -30,11 +32,21 @@ class BannerSeeder extends Seeder
                 'cta_label' => 'See Delivery Areas',
                 'cta_url' => '/shop',
                 'sort_order' => 2,
+                'image' => 'bakery-display.jpg',
             ],
         ];
 
-        foreach ($banners as $banner) {
-            Banner::query()->updateOrCreate(['title' => $banner['title']], $banner + ['is_active' => true]);
+        foreach ($banners as $data) {
+            $image = $data['image'];
+            unset($data['image']);
+
+            $banner = Banner::query()->updateOrCreate(['title' => $data['title']], $data + ['is_active' => true]);
+
+            if ($banner->getMedia('image')->isEmpty()) {
+                $banner->addMedia(__DIR__.'/images/'.$image)
+                    ->preservingOriginal()
+                    ->toMediaCollection('image');
+            }
         }
     }
 }

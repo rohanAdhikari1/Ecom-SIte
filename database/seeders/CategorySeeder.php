@@ -11,25 +11,33 @@ class CategorySeeder extends Seeder
     public function run(): void
     {
         $categories = [
-            'Birthday Cakes',
-            'Chocolate Cakes',
-            'Fondant Cakes',
-            'Cheesecakes',
-            'Photo Cakes',
-            'Cupcakes',
-            'Eggless Cakes',
-            'Wedding & Anniversary',
+            'Birthday Cakes' => 'birthday-drip-pink.jpg',
+            'Chocolate Cakes' => 'chocolate-cake.jpg',
+            'Fondant Cakes' => 'fondant-baby-theme.jpg',
+            'Cheesecakes' => 'cheesecake-berry.jpg',
+            'Photo Cakes' => 'redvelvet-slice.jpg',
+            'Cupcakes' => 'cupcake-strawberry.jpg',
+            'Eggless Cakes' => 'vanilla-strawberry-slice.jpg',
+            'Wedding & Anniversary' => 'wedding-tier-flowers.jpg',
         ];
 
-        foreach ($categories as $index => $name) {
-            Category::query()->updateOrCreate(
+        $index = 0;
+
+        foreach ($categories as $name => $image) {
+            $category = Category::query()->updateOrCreate(
                 ['slug' => Str::slug($name)],
                 [
                     'name' => $name,
-                    'sort_order' => $index,
+                    'sort_order' => $index++,
                     'is_active' => true,
                 ],
             );
+
+            if ($category->getMedia('image')->isEmpty()) {
+                $category->addMedia(__DIR__.'/images/'.$image)
+                    ->preservingOriginal()
+                    ->toMediaCollection('image');
+            }
         }
     }
 }

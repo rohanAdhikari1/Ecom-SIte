@@ -22,6 +22,7 @@ class ProductSeeder extends Seeder
                 'is_featured' => true,
                 'weights' => [['1 lb', 750], ['2 lb', 1400], ['3 lb', 2000]],
                 'flavors' => [['Vanilla', 0], ['Chocolate', 0], ['Butterscotch', 100]],
+                'images' => ['birthday-drip-pink.jpg'],
             ],
             [
                 'category' => 'Chocolate Cakes',
@@ -30,6 +31,7 @@ class ProductSeeder extends Seeder
                 'is_featured' => true,
                 'weights' => [['1 lb', 850], ['2 lb', 1600], ['3 lb', 2300]],
                 'flavors' => [['Dark Chocolate', 0], ['Milk Chocolate', 0]],
+                'images' => ['chocolate-cake.jpg'],
             ],
             [
                 'category' => 'Fondant Cakes',
@@ -38,6 +40,7 @@ class ProductSeeder extends Seeder
                 'is_featured' => true,
                 'weights' => [['2 lb', 2200], ['3 lb', 3200], ['5 lb', 5000]],
                 'flavors' => [['Vanilla', 0], ['Chocolate', 0], ['Red Velvet', 150]],
+                'images' => ['fondant-baby-theme.jpg'],
             ],
             [
                 'category' => 'Cheesecakes',
@@ -46,6 +49,7 @@ class ProductSeeder extends Seeder
                 'is_featured' => false,
                 'weights' => [['1 lb', 950], ['2 lb', 1800]],
                 'flavors' => [['Plain', 0], ['Blueberry', 150], ['Strawberry', 150]],
+                'images' => ['cheesecake-berry.jpg'],
             ],
             [
                 'category' => 'Photo Cakes',
@@ -54,6 +58,7 @@ class ProductSeeder extends Seeder
                 'is_featured' => false,
                 'weights' => [['1 lb', 900], ['2 lb', 1650]],
                 'flavors' => [['Vanilla', 0], ['Chocolate', 0]],
+                'images' => ['birthday-happy.jpg'],
             ],
             [
                 'category' => 'Cupcakes',
@@ -62,6 +67,7 @@ class ProductSeeder extends Seeder
                 'is_featured' => false,
                 'weights' => [['Box of 6', 600], ['Box of 12', 1100]],
                 'flavors' => [['Mixed', 0]],
+                'images' => ['cupcake-strawberry.jpg'],
             ],
             [
                 'category' => 'Eggless Cakes',
@@ -71,6 +77,7 @@ class ProductSeeder extends Seeder
                 'weights' => [['1 lb', 750], ['2 lb', 1400]],
                 'flavors' => [['Vanilla', 0], ['Chocolate', 0]],
                 'eggless' => true,
+                'images' => ['vanilla-strawberry-slice.jpg'],
             ],
             [
                 'category' => 'Wedding & Anniversary',
@@ -79,6 +86,7 @@ class ProductSeeder extends Seeder
                 'is_featured' => true,
                 'weights' => [['5 lb', 6500], ['8 lb', 9800], ['10 lb', 12000]],
                 'flavors' => [['Vanilla', 0], ['Chocolate', 0], ['Red Velvet', 300]],
+                'images' => ['wedding-tier-flowers.jpg', 'wedding-rose-pink.jpg'],
             ],
         ];
 
@@ -120,6 +128,14 @@ class ProductSeeder extends Seeder
             }
 
             $product->addons()->sync($addonIds);
+
+            if ($product->getMedia('gallery')->isEmpty()) {
+                foreach ($data['images'] as $image) {
+                    $product->addMedia(__DIR__.'/images/'.$image)
+                        ->preservingOriginal()
+                        ->toMediaCollection('gallery');
+                }
+            }
         }
     }
 }

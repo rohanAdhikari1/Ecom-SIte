@@ -42,7 +42,7 @@ class Category extends Model implements HasMedia
 
     public function registerMediaCollections(): void
     {
-        $this->addMediaCollection('image')->singleFile();
+        $this->addMediaCollection('image')->singleFile()->useDisk('public');
     }
 
     protected function image(): Attribute

@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Testimonials\Schemas;
 
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
@@ -14,6 +15,13 @@ class TestimonialForm
     {
         return $schema
             ->components([
+                SpatieMediaLibraryFileUpload::make('photo')
+                    ->collection('photo')
+                    ->label('Customer photo')
+                    ->avatar()
+                    ->image()
+                    ->imageEditor()
+                    ->columnSpanFull(),
                 TextInput::make('name')
                     ->required(),
                 Select::make('rating')

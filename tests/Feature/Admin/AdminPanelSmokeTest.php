@@ -16,12 +16,12 @@ beforeEach(function () {
 
 test('admin can view the dashboard', function () {
     $this->actingAs($this->admin)
-        ->get('/admin')
+        ->get('/crm')
         ->assertOk();
 });
 
 test('guests are redirected away from the admin panel', function () {
-    $this->get('/admin')->assertRedirect('/admin/login');
+    $this->get('/crm')->assertRedirect('/crm/login');
 });
 
 test('admin can view every resource index page', function () {
@@ -31,14 +31,14 @@ test('admin can view every resource index page', function () {
 
     foreach ($paths as $path) {
         $this->actingAs($this->admin)
-            ->get("/admin/{$path}")
+            ->get("/crm/{$path}")
             ->assertOk();
     }
 });
 
 test('admin can view the settings page', function () {
     $this->actingAs($this->admin)
-        ->get('/admin/manage-settings')
+        ->get('/crm/manage-settings')
         ->assertOk();
 });
 
@@ -47,7 +47,7 @@ test('staff cannot view the settings page', function () {
     $staff->assignRole('staff');
 
     $this->actingAs($staff)
-        ->get('/admin/manage-settings')
+        ->get('/crm/manage-settings')
         ->assertForbidden();
 });
 
@@ -60,7 +60,7 @@ test('admin can view and edit a product with its relations', function () {
     $product->addons()->attach($addon);
 
     $this->actingAs($this->admin)
-        ->get("/admin/products/{$product->id}/edit")
+        ->get("/crm/products/{$product->id}/edit")
         ->assertOk();
 });
 
@@ -77,7 +77,7 @@ test('admin can view an order with its items', function () {
     ]);
 
     $this->actingAs($this->admin)
-        ->get("/admin/orders/{$order->id}/edit")
+        ->get("/crm/orders/{$order->id}/edit")
         ->assertOk();
 });
 
@@ -95,7 +95,7 @@ test('admin can view the order detail page with map, items, and status history',
     $orderItem->addons()->create(['addon_name' => 'Birthday Candles', 'addon_price' => 50]);
 
     $this->actingAs($this->admin)
-        ->get("/admin/orders/{$order->id}")
+        ->get("/crm/orders/{$order->id}")
         ->assertOk()
         ->assertSee($order->order_number)
         ->assertSee('Test Cake')

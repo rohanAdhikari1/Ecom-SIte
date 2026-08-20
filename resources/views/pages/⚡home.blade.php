@@ -290,7 +290,16 @@ new class extends Component
                             @endfor
                         </div>
                         <p class="mt-3 text-sm text-ink/80">&ldquo;{{ $testimonial->message }}&rdquo;</p>
-                        <p class="mt-4 text-sm font-semibold text-ink">— {{ $testimonial->name }}</p>
+                        <div class="mt-4 flex items-center gap-3">
+                            @if ($testimonial->photo_url)
+                                <img src="{{ $testimonial->photo_url }}" alt="{{ $testimonial->name }}" class="h-9 w-9 rounded-full object-cover ring-2 ring-white shadow-sm">
+                            @else
+                                <span class="flex h-9 w-9 items-center justify-center rounded-full bg-brand-100 text-xs font-semibold text-brand-700">
+                                    {{ Illuminate\Support\Str::of($testimonial->name)->explode(' ')->map(fn ($part) => mb_substr($part, 0, 1))->take(2)->implode('') }}
+                                </span>
+                            @endif
+                            <p class="text-sm font-semibold text-ink">{{ $testimonial->name }}</p>
+                        </div>
                     </div>
                 @endforeach
             </div>
