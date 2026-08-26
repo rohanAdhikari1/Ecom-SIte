@@ -17,7 +17,7 @@ class ProductFactory extends Factory
      */
     public function definition(): array
     {
-        $name = ucfirst(fake()->unique()->words(3, true)).' Cake';
+        $name = ucfirst(fake()->unique()->words(3, true));
 
         return [
             'category_id' => Category::factory(),
@@ -25,9 +25,9 @@ class ProductFactory extends Factory
             'slug' => Str::slug($name).'-'.fake()->unique()->numberBetween(1, 100000),
             'description' => fake()->paragraph(),
             'base_price' => fake()->numberBetween(700, 3500),
-            'is_eggless' => fake()->boolean(30),
-            'allows_message' => true,
-            'message_max_length' => 40,
+            'has_custom_field' => true,
+            'custom_field_label' => 'Special Instructions',
+            'custom_field_max_length' => 40,
             'is_featured' => fake()->boolean(20),
             'is_active' => true,
         ];

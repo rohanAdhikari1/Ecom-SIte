@@ -1,4 +1,4 @@
-@props(['initialLat' => 26.4525, 'initialLng' => 87.2718])
+@props(['initialLat' => 0.0, 'initialLng' => 0.0])
 
 @if (! config('services.google_maps.key'))
     <div class="rounded-xl border border-dashed border-brand-200 bg-brand-50/50 px-4 py-3 text-xs text-ink/60">
@@ -22,7 +22,7 @@
                 this.map = new google.maps.Map(this.$refs.mapEl, {
                     center,
                     zoom: 14,
-                    mapId: 'BRT_LIVE_CAKE_MAP',
+                    mapId: 'DELIVERY_MAP',
                     streetViewControl: false,
                     fullscreenControl: false,
                     mapTypeControl: false,
@@ -94,6 +94,6 @@
             </button>
         </div>
         <div x-ref="mapEl" class="h-56 w-full bg-brand-50"></div>
-        <p x-show="failed" x-cloak class="px-3 py-2 text-xs text-rose-brand-600">Map failed to load. You can still type your address above.</p>
+        <p x-show="failed" x-cloak class="px-3 py-2 text-xs text-accent-600">Map failed to load. You can still type your address above.</p>
     </div>
 @endif

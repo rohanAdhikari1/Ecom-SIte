@@ -61,15 +61,20 @@ class OrderService
                 $orderItem = $order->items()->create([
                     'product_id' => $item['product_id'],
                     'product_name' => $item['product_name'],
-                    'weight_label' => $item['weight_label'],
-                    'weight_price' => $item['weight_price'],
-                    'flavor_label' => $item['flavor_label'],
-                    'flavor_price_modifier' => $item['flavor_price_modifier'],
-                    'message_on_cake' => $item['message_on_cake'],
+                    'custom_field_value' => $item['custom_field_value'],
                     'quantity' => $item['quantity'],
                     'unit_price' => $item['unit_price'],
+                    'addons_total' => $item['addons_total'],
                     'line_total' => $item['line_total'],
                 ]);
+
+                foreach ($item['options'] as $option) {
+                    $orderItem->options()->create([
+                        'option_type_name' => $option['type_name'],
+                        'option_value_label' => $option['value_label'],
+                        'price_modifier' => $option['price_modifier'],
+                    ]);
+                }
 
                 foreach ($item['addons'] as $addon) {
                     $orderItem->addons()->create([

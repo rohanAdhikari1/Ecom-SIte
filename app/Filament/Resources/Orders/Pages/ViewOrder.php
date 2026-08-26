@@ -94,18 +94,18 @@ class ViewOrder extends ViewRecord
                                             ->label('Product')
                                             ->weight('semibold')
                                             ->columnSpan(2),
-                                        TextEntry::make('weight_label')
-                                            ->label('Weight'),
-                                        TextEntry::make('flavor_label')
-                                            ->label('Flavor')
-                                            ->placeholder('—'),
+                                        TextEntry::make('options')
+                                            ->label('Options')
+                                            ->placeholder('—')
+                                            ->state(fn ($record) => $record->options->map(fn ($option) => "{$option->option_type_name}: {$option->option_value_label}")->implode(', ') ?: null)
+                                            ->columnSpan(2),
                                         TextEntry::make('quantity')
                                             ->label('Qty'),
                                         TextEntry::make('line_total')
                                             ->label('Total')
                                             ->money('NPR'),
-                                        TextEntry::make('message_on_cake')
-                                            ->label('Message on cake')
+                                        TextEntry::make('custom_field_value')
+                                            ->label('Custom field')
                                             ->placeholder('—')
                                             ->columnSpanFull(),
                                         TextEntry::make('addons')

@@ -35,9 +35,9 @@ new class extends Component
 
     public ?float $addressLng = null;
 
-    public float $mapDefaultLat = 26.4733808;
+    public float $mapDefaultLat = 0.0;
 
-    public float $mapDefaultLng = 87.2730507;
+    public float $mapDefaultLng = 0.0;
 
     public function mount(): void
     {
@@ -159,7 +159,7 @@ new class extends Component
 
 <div class="mx-auto max-w-3xl px-4 py-10 sm:px-6 lg:px-8">
     {{-- Profile header --}}
-    <div class="overflow-hidden rounded-3xl bg-linear-to-br from-brand-600 via-brand-600 to-rose-brand-600 p-8 text-white shadow-lg">
+    <div class="overflow-hidden rounded-3xl bg-linear-to-br from-brand-600 via-brand-600 to-accent-600 p-8 text-white shadow-lg">
         <div class="flex items-center gap-4">
             <span class="flex h-16 w-16 items-center justify-center rounded-full bg-white/15 font-display text-2xl font-semibold ring-4 ring-white/20">
                 {{ auth()->user()->initials() }}
@@ -202,7 +202,7 @@ new class extends Component
                     <div class="sm:col-span-2">
                         <label class="text-sm font-medium text-ink/80">Address</label>
                         <textarea wire:model="addressText" rows="1" placeholder="Type or pin on the map below" class="mt-1 w-full rounded-xl border border-brand-100 px-3 py-2.5 text-sm focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-200"></textarea>
-                        @error('addressText') <p class="mt-1 text-xs text-rose-brand-600">{{ $message }}</p> @enderror
+                        @error('addressText') <p class="mt-1 text-xs text-accent-600">{{ $message }}</p> @enderror
                     </div>
                 </div>
 
@@ -236,7 +236,7 @@ new class extends Component
                             <button wire:click="makeAddressDefault({{ $address->id }})" class="font-medium text-brand-600 hover:text-brand-700">Set default</button>
                         @endunless
                         <button wire:click="editAddress({{ $address->id }})" class="font-medium text-ink/50 hover:text-ink">Edit</button>
-                        <button wire:click="deleteAddress({{ $address->id }})" wire:confirm="Remove this address?" class="font-medium text-rose-brand-500 hover:text-rose-brand-600">Delete</button>
+                        <button wire:click="deleteAddress({{ $address->id }})" wire:confirm="Remove this address?" class="font-medium text-accent-500 hover:text-accent-600">Delete</button>
                     </div>
                 </div>
             @empty
@@ -256,17 +256,17 @@ new class extends Component
             <div class="sm:col-span-2">
                 <label class="text-sm font-medium text-ink/80">Full Name</label>
                 <input type="text" wire:model="name" class="mt-1 w-full rounded-xl border border-brand-100 px-3 py-2.5 text-sm focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-200">
-                @error('name') <p class="mt-1 text-xs text-rose-brand-600">{{ $message }}</p> @enderror
+                @error('name') <p class="mt-1 text-xs text-accent-600">{{ $message }}</p> @enderror
             </div>
             <div>
                 <label class="text-sm font-medium text-ink/80">Email</label>
                 <input type="email" wire:model="email" class="mt-1 w-full rounded-xl border border-brand-100 px-3 py-2.5 text-sm focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-200">
-                @error('email') <p class="mt-1 text-xs text-rose-brand-600">{{ $message }}</p> @enderror
+                @error('email') <p class="mt-1 text-xs text-accent-600">{{ $message }}</p> @enderror
             </div>
             <div>
                 <label class="text-sm font-medium text-ink/80">Phone Number</label>
                 <input type="tel" wire:model="phone" placeholder="98XXXXXXXX" class="mt-1 w-full rounded-xl border border-brand-100 px-3 py-2.5 text-sm focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-200">
-                @error('phone') <p class="mt-1 text-xs text-rose-brand-600">{{ $message }}</p> @enderror
+                @error('phone') <p class="mt-1 text-xs text-accent-600">{{ $message }}</p> @enderror
             </div>
 
             <div class="sm:col-span-2">
@@ -284,12 +284,12 @@ new class extends Component
             <div>
                 <label class="text-sm font-medium text-ink/80">Current Password</label>
                 <input type="password" wire:model="currentPassword" class="mt-1 w-full rounded-xl border border-brand-100 px-3 py-2.5 text-sm focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-200">
-                @error('currentPassword') <p class="mt-1 text-xs text-rose-brand-600">{{ $message }}</p> @enderror
+                @error('currentPassword') <p class="mt-1 text-xs text-accent-600">{{ $message }}</p> @enderror
             </div>
             <div>
                 <label class="text-sm font-medium text-ink/80">New Password</label>
                 <input type="password" wire:model="newPassword" class="mt-1 w-full rounded-xl border border-brand-100 px-3 py-2.5 text-sm focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-200">
-                @error('newPassword') <p class="mt-1 text-xs text-rose-brand-600">{{ $message }}</p> @enderror
+                @error('newPassword') <p class="mt-1 text-xs text-accent-600">{{ $message }}</p> @enderror
             </div>
             <div>
                 <label class="text-sm font-medium text-ink/80">Confirm New Password</label>
@@ -306,6 +306,6 @@ new class extends Component
 
     <form method="POST" action="{{ route('logout') }}" class="mt-6 text-center">
         @csrf
-        <button type="submit" class="text-sm font-medium text-ink/50 hover:text-rose-brand-600">Logout</button>
+        <button type="submit" class="text-sm font-medium text-ink/50 hover:text-accent-600">Logout</button>
     </form>
 </div>

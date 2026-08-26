@@ -2,7 +2,8 @@
 
 use App\Models\Category;
 use App\Models\Product;
-use App\Models\ProductWeightOption;
+use App\Models\ProductOptionType;
+use App\Models\ProductOptionValue;
 use Database\Seeders\SettingSeeder;
 
 beforeEach(function () {
@@ -25,7 +26,8 @@ test('shop category page renders', function () {
 
 test('product page renders', function () {
     $product = Product::factory()->for(Category::factory())->create();
-    ProductWeightOption::factory()->for($product)->create(['is_default' => true]);
+    $type = ProductOptionType::factory()->for($product)->create(['is_required' => true]);
+    ProductOptionValue::factory()->for($type, 'optionType')->create(['is_default' => true]);
 
     $this->get("/product/{$product->slug}")->assertOk();
 });

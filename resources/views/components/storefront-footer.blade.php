@@ -1,5 +1,5 @@
 @php
-    $shopName = \App\Models\Setting::get('shop_name', 'BRT Live Cake');
+    $shopName = \App\Models\Setting::get('shop_name', 'ShopKit');
     $tagline = \App\Models\Setting::get('shop_tagline');
     $phone = \App\Models\Setting::get('contact_phone');
     $whatsapp = \App\Models\Setting::get('contact_whatsapp');
@@ -18,13 +18,12 @@
     </svg>
 
     <div class="pointer-events-none absolute -top-24 right-0 h-72 w-72 rounded-full bg-brand-600/20 blur-3xl"></div>
-    <div class="pointer-events-none absolute bottom-0 left-0 h-64 w-64 rounded-full bg-rose-brand-600/10 blur-3xl"></div>
+    <div class="pointer-events-none absolute bottom-0 left-0 h-64 w-64 rounded-full bg-accent-600/10 blur-3xl"></div>
 
     <div class="relative mx-auto grid max-w-7xl gap-10 px-4 pt-16 pb-12 sm:px-6 md:grid-cols-2 lg:px-8 lg:grid-cols-4">
         <div class="lg:col-span-1">
             <div class="flex items-center gap-2.5">
-                <img src="{{ asset('images/logo-circle.png') }}" alt="{{ $shopName }} logo"
-                    class="h-11 w-11 rounded-full ring-2 ring-white/10">
+                <x-shop-logo :name="$shopName" class="h-11 w-11 text-base ring-2 ring-white/10" />
                 <span class="font-display text-lg font-semibold text-white">{{ $shopName }}</span>
             </div>
             @if ($tagline)
@@ -43,7 +42,7 @@
                 @endif
                 @if ($instagram)
                     <a href="{{ $instagram }}" target="_blank" rel="noopener" aria-label="Instagram"
-                        class="flex h-9 w-9 items-center justify-center rounded-full bg-white/5 text-white/70 transition hover:bg-rose-brand-600 hover:text-white">
+                        class="flex h-9 w-9 items-center justify-center rounded-full bg-white/5 text-white/70 transition hover:bg-accent-600 hover:text-white">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="h-4 w-4 fill-current">
                             <path
                                 d="M12 2c-2.717 0-3.056.012-4.123.06-1.064.049-1.79.218-2.427.465a4.9 4.9 0 0 0-1.771 1.153A4.9 4.9 0 0 0 2.525 5.45c-.247.637-.416 1.363-.465 2.427C2.012 8.944 2 9.283 2 12s.012 3.056.06 4.123c.049 1.064.218 1.79.465 2.427a4.9 4.9 0 0 0 1.153 1.771 4.9 4.9 0 0 0 1.771 1.153c.637.247 1.363.416 2.427.465C8.944 21.988 9.283 22 12 22s3.056-.012 4.123-.06c1.064-.049 1.79-.218 2.427-.465a4.9 4.9 0 0 0 1.771-1.153 4.9 4.9 0 0 0 1.153-1.771c.247-.637.416-1.363.465-2.427.048-1.067.06-1.406.06-4.123s-.012-3.056-.06-4.123c-.049-1.064-.218-1.79-.465-2.427a4.9 4.9 0 0 0-1.153-1.771A4.9 4.9 0 0 0 18.55 2.525c-.637-.247-1.363-.416-2.427-.465C15.056 2.012 14.717 2 12 2Zm0 1.802c2.67 0 2.987.01 4.042.059.976.045 1.505.207 1.858.344.467.182.8.399 1.15.748.35.35.566.683.748 1.15.137.353.3.882.344 1.858.048 1.055.058 1.372.058 4.042s-.01 2.987-.058 4.042c-.045.976-.207 1.505-.344 1.858a3.1 3.1 0 0 1-.748 1.15 3.1 3.1 0 0 1-1.15.748c-.353.137-.882.3-1.858.344-1.055.048-1.372.058-4.042.058s-2.987-.01-4.042-.058c-.976-.045-1.505-.207-1.858-.344a3.1 3.1 0 0 1-1.15-.748 3.1 3.1 0 0 1-.748-1.15c-.137-.353-.3-.882-.344-1.858-.048-1.055-.058-1.372-.058-4.042s.01-2.987.058-4.042c.045-.976.207-1.505.344-1.858.182-.467.399-.8.748-1.15.35-.35.683-.566 1.15-.748.353-.137.882-.3 1.858-.344 1.055-.048 1.372-.059 4.042-.059Zm0 3.063a5.135 5.135 0 1 0 0 10.27 5.135 5.135 0 0 0 0-10.27Zm0 8.468a3.333 3.333 0 1 1 0-6.666 3.333 3.333 0 0 1 0 6.666Zm6.538-8.671a1.2 1.2 0 1 1-2.4 0 1.2 1.2 0 0 1 2.4 0Z" />
@@ -67,7 +66,7 @@
             <h3 class="font-display text-xs font-semibold tracking-widest text-white/90 uppercase">Quick Links</h3>
             <ul class="mt-4 space-y-2.5 text-sm">
                 <li><a href="{{ route('shop') }}" wire:navigate class="text-white/60 transition hover:text-white">Shop
-                        All Cakes</a></li>
+                        All Products</a></li>
                 <li><a href="{{ route('order.track') }}" wire:navigate
                         class="text-white/60 transition hover:text-white">Track Your Order</a></li>
                 <li><a href="{{ route('cart') }}" wire:navigate class="text-white/60 transition hover:text-white">View
@@ -146,8 +145,7 @@
                     @endunless
                 </span>
             </div>
-            <p class="mt-6 text-xs text-white/40">Secure ordering, fresh ingredients, and a happiness guarantee on every
-                cake.</p>
+            <p class="mt-6 text-xs text-white/40">Secure ordering and a happiness guarantee on every order.</p>
         </div>
     </div>
 

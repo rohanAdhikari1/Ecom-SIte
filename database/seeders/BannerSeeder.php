@@ -11,23 +11,23 @@ class BannerSeeder extends Seeder
     {
         $banners = [
             [
-                'title' => 'Freshly Baked, Delivered with Love',
-                'subtitle' => 'Biratnagar\'s favourite cake shop — order online in minutes.',
+                'title' => 'Quality You Can Trust, Delivered with Care',
+                'subtitle' => 'Your favourite local shop — order online in minutes.',
                 'cta_label' => 'Order Now',
                 'cta_url' => '/shop',
                 'sort_order' => 0,
                 'image' => 'chef-piping.jpg',
             ],
             [
-                'title' => 'Design Your Dream Cake',
-                'subtitle' => 'Pick your weight, flavour, and add a personal message — free on every cake.',
-                'cta_label' => 'Customise a Cake',
+                'title' => 'Fully Customisable Orders',
+                'subtitle' => 'Pick your options and add a personal note — free on every order.',
+                'cta_label' => 'Start Customising',
                 'cta_url' => '/shop',
                 'sort_order' => 1,
                 'image' => 'wedding-rose-pink.jpg',
             ],
             [
-                'title' => 'Same-Day Delivery Across Biratnagar',
+                'title' => 'Same-Day Delivery',
                 'subtitle' => 'Order before 4 PM and get it delivered fresh, the same day.',
                 'cta_label' => 'See Delivery Areas',
                 'cta_url' => '/shop',

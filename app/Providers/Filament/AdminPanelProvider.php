@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use App\Models\Setting;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -28,11 +29,11 @@ class AdminPanelProvider extends PanelProvider
             ->default()
             ->id('admin')
             ->path('crm')
-            ->brandName('BRT Live Cake')
+            ->brandName(fn () => Setting::get('shop_name', 'ShopKit'))
             ->favicon(asset('favicon-32.png'))
             ->login()
             ->colors([
-                'primary' => Color::hex('#167674'),
+                'primary' => Color::hex('#4F46E5'),
                 'danger' => Color::Rose,
             ])
             ->navigationGroups([

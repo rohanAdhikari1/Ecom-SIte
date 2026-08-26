@@ -1,5 +1,8 @@
 <?php
 
+use App\Models\Product;
+use App\Models\ProductOptionType;
+use App\Models\ProductOptionValue;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -44,7 +47,9 @@ expect()->extend('toBeOne', function () {
 |
 */
 
-function something()
+function makeSizeValue(Product $product, int $priceModifier = 0): ProductOptionValue
 {
-    // ..
+    $type = ProductOptionType::factory()->for($product)->create(['name' => 'Size', 'is_required' => true]);
+
+    return ProductOptionValue::factory()->for($type, 'optionType')->create(['price_modifier' => $priceModifier, 'is_default' => true]);
 }

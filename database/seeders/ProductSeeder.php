@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\Addon;
 use App\Models\Category;
 use App\Models\Product;
+use App\Models\ProductBadge;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Str;
 
@@ -18,9 +19,9 @@ class ProductSeeder extends Seeder
             [
                 'category' => 'Birthday Cakes',
                 'name' => 'Rainbow Sprinkle Cake',
-                'description' => 'A festive vanilla sponge layered with buttercream and topped with rainbow sprinkles — a BRT Live Cake birthday favourite.',
+                'description' => 'A festive vanilla sponge layered with buttercream and topped with rainbow sprinkles — a shop favourite for birthdays.',
                 'is_featured' => true,
-                'weights' => [['1 lb', 750], ['2 lb', 1400], ['3 lb', 2000]],
+                'sizes' => [['1 lb', 750], ['2 lb', 1400], ['3 lb', 2000]],
                 'flavors' => [['Vanilla', 0], ['Chocolate', 0], ['Butterscotch', 100]],
                 'images' => ['birthday-drip-pink.jpg'],
             ],
@@ -29,7 +30,7 @@ class ProductSeeder extends Seeder
                 'name' => 'Belgian Chocolate Truffle',
                 'description' => 'Rich Belgian chocolate sponge soaked in chocolate ganache with a truffle finish.',
                 'is_featured' => true,
-                'weights' => [['1 lb', 850], ['2 lb', 1600], ['3 lb', 2300]],
+                'sizes' => [['1 lb', 850], ['2 lb', 1600], ['3 lb', 2300]],
                 'flavors' => [['Dark Chocolate', 0], ['Milk Chocolate', 0]],
                 'images' => ['chocolate-cake.jpg'],
             ],
@@ -38,7 +39,7 @@ class ProductSeeder extends Seeder
                 'name' => 'Custom Fondant Theme Cake',
                 'description' => 'A fully customisable fondant cake — tell us your theme and we bring it to life.',
                 'is_featured' => true,
-                'weights' => [['2 lb', 2200], ['3 lb', 3200], ['5 lb', 5000]],
+                'sizes' => [['2 lb', 2200], ['3 lb', 3200], ['5 lb', 5000]],
                 'flavors' => [['Vanilla', 0], ['Chocolate', 0], ['Red Velvet', 150]],
                 'images' => ['fondant-baby-theme.jpg'],
             ],
@@ -47,7 +48,7 @@ class ProductSeeder extends Seeder
                 'name' => 'New York Baked Cheesecake',
                 'description' => 'Classic creamy baked cheesecake with a buttery biscuit base.',
                 'is_featured' => false,
-                'weights' => [['1 lb', 950], ['2 lb', 1800]],
+                'sizes' => [['1 lb', 950], ['2 lb', 1800]],
                 'flavors' => [['Plain', 0], ['Blueberry', 150], ['Strawberry', 150]],
                 'images' => ['cheesecake-berry.jpg'],
             ],
@@ -56,7 +57,7 @@ class ProductSeeder extends Seeder
                 'name' => 'Edible Photo Print Cake',
                 'description' => 'Vanilla or chocolate sponge topped with an edible print of your favourite photo.',
                 'is_featured' => false,
-                'weights' => [['1 lb', 900], ['2 lb', 1650]],
+                'sizes' => [['1 lb', 900], ['2 lb', 1650]],
                 'flavors' => [['Vanilla', 0], ['Chocolate', 0]],
                 'images' => ['birthday-happy.jpg'],
             ],
@@ -65,7 +66,7 @@ class ProductSeeder extends Seeder
                 'name' => 'Assorted Cupcakes (Box of 6)',
                 'description' => 'A colourful assortment of six mini cupcakes, perfect for small celebrations.',
                 'is_featured' => false,
-                'weights' => [['Box of 6', 600], ['Box of 12', 1100]],
+                'sizes' => [['Box of 6', 600], ['Box of 12', 1100]],
                 'flavors' => [['Mixed', 0]],
                 'images' => ['cupcake-strawberry.jpg'],
             ],
@@ -74,9 +75,9 @@ class ProductSeeder extends Seeder
                 'name' => 'Eggless Vanilla Delight',
                 'description' => '100% eggless vanilla sponge cake with fresh cream frosting.',
                 'is_featured' => true,
-                'weights' => [['1 lb', 750], ['2 lb', 1400]],
+                'sizes' => [['1 lb', 750], ['2 lb', 1400]],
                 'flavors' => [['Vanilla', 0], ['Chocolate', 0]],
-                'eggless' => true,
+                'badges' => ['Eggless'],
                 'images' => ['vanilla-strawberry-slice.jpg'],
             ],
             [
@@ -84,7 +85,7 @@ class ProductSeeder extends Seeder
                 'name' => 'Three-Tier Celebration Cake',
                 'description' => 'An elegant three-tier cake designed for weddings and anniversaries, fully customisable.',
                 'is_featured' => true,
-                'weights' => [['5 lb', 6500], ['8 lb', 9800], ['10 lb', 12000]],
+                'sizes' => [['5 lb', 6500], ['8 lb', 9800], ['10 lb', 12000]],
                 'flavors' => [['Vanilla', 0], ['Chocolate', 0], ['Red Velvet', 300]],
                 'images' => ['wedding-tier-flowers.jpg', 'wedding-rose-pink.jpg'],
             ],
@@ -99,33 +100,48 @@ class ProductSeeder extends Seeder
                     'category_id' => $category->id,
                     'name' => $data['name'],
                     'description' => $data['description'],
-                    'base_price' => $data['weights'][0][1],
-                    'is_eggless' => $data['eggless'] ?? false,
-                    'allows_message' => true,
-                    'message_max_length' => 40,
+                    'base_price' => $data['sizes'][0][1],
+                    'has_custom_field' => true,
+                    'custom_field_label' => 'Message on Cake',
+                    'custom_field_max_length' => 40,
                     'is_featured' => $data['is_featured'],
                     'is_active' => true,
                 ],
             );
 
-            $product->weightOptions()->delete();
-            foreach ($data['weights'] as $index => [$label, $price]) {
-                $product->weightOptions()->create([
+            $product->optionTypes()->delete();
+
+            $sizeType = $product->optionTypes()->create([
+                'name' => 'Size',
+                'sort_order' => 0,
+                'is_required' => true,
+            ]);
+            foreach ($data['sizes'] as $index => [$label, $price]) {
+                $sizeType->values()->create([
                     'label' => $label,
-                    'price' => $price,
+                    'price_modifier' => $price - $data['sizes'][0][1],
                     'sort_order' => $index,
                     'is_default' => $index === 0,
                 ]);
             }
 
-            $product->flavorOptions()->delete();
-            foreach ($data['flavors'] as $index => [$name, $modifier]) {
-                $product->flavorOptions()->create([
-                    'name' => $name,
+            $flavorType = $product->optionTypes()->create([
+                'name' => 'Flavor',
+                'sort_order' => 1,
+                'is_required' => false,
+            ]);
+            foreach ($data['flavors'] as $index => [$label, $modifier]) {
+                $flavorType->values()->create([
+                    'label' => $label,
                     'price_modifier' => $modifier,
                     'sort_order' => $index,
+                    'is_default' => $index === 0,
                 ]);
             }
+
+            $badgeIds = collect($data['badges'] ?? [])
+                ->map(fn (string $name) => ProductBadge::query()->firstOrCreate(['name' => $name])->id);
+            $product->badges()->sync($badgeIds);
 
             $product->addons()->sync($addonIds);
 

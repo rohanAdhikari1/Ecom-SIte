@@ -60,16 +60,16 @@ new class extends Component
                     x-ref="searchInput"
                     type="search"
                     wire:model.live.debounce.300ms="query"
-                    placeholder="Search for cakes, flavours…"
+                    placeholder="Search for products…"
                     class="w-full border-0 p-0 text-sm text-ink placeholder:text-ink/40 focus:outline-none focus:ring-0"
                 >
             </form>
 
             <div class="max-h-96 overflow-y-auto">
                 @if (mb_strlen(trim($query)) < 2)
-                    <p class="px-4 py-6 text-center text-sm text-ink/50">Start typing to find your favourite cake…</p>
+                    <p class="px-4 py-6 text-center text-sm text-ink/50">Start typing to search products…</p>
                 @elseif ($this->results->isEmpty())
-                    <p class="px-4 py-6 text-center text-sm text-ink/50">No cakes found for "{{ $query }}".</p>
+                    <p class="px-4 py-6 text-center text-sm text-ink/50">No products found for "{{ $query }}".</p>
                 @else
                     <ul class="divide-y divide-brand-50">
                         @foreach ($this->results as $product)

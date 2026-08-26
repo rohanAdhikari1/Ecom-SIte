@@ -11,9 +11,9 @@
 @endphp
 
 @if ($order->status === \App\Enums\OrderStatus::Cancelled)
-    <div class="rounded-2xl border border-rose-brand-200 bg-rose-brand-50 p-6 text-center">
-        <p class="font-semibold text-rose-brand-700">This order was cancelled.</p>
-        <p class="mt-1 text-sm text-rose-brand-600">Contact us if you believe this is a mistake.</p>
+    <div class="rounded-2xl border border-accent-200 bg-accent-50 p-6 text-center">
+        <p class="font-semibold text-accent-700">This order was cancelled.</p>
+        <p class="mt-1 text-sm text-accent-600">Contact us if you believe this is a mistake.</p>
     </div>
 @else
     <div class="rounded-2xl border border-brand-100 bg-white p-6 shadow-sm">
@@ -72,8 +72,7 @@
                             <div>
                                 <p class="font-medium text-ink">{{ $item->quantity }} × {{ $item->product_name }}</p>
                                 <p class="text-xs text-ink/60">
-                                    {{ $item->weight_label }}
-                                    @if ($item->flavor_label) &middot; {{ $item->flavor_label }} @endif
+                                    {{ $item->options->pluck('option_value_label')->implode(' · ') }}
                                 </p>
                             </div>
                             <span class="font-medium text-ink">{{ \App\Support\Money::format($item->line_total) }}</span>

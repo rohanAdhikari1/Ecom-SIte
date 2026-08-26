@@ -54,8 +54,8 @@ test('staff cannot view the settings page', function () {
 test('admin can view and edit a product with its relations', function () {
     $category = Category::factory()->create();
     $product = Product::factory()->for($category)->create();
-    $product->weightOptions()->create(['label' => '1 lb', 'price' => 800, 'sort_order' => 0, 'is_default' => true]);
-    $product->flavorOptions()->create(['name' => 'Chocolate', 'price_modifier' => 0, 'sort_order' => 0]);
+    $sizeType = $product->optionTypes()->create(['name' => 'Size', 'sort_order' => 0, 'is_required' => true]);
+    $sizeType->values()->create(['label' => '1 lb', 'price_modifier' => 0, 'sort_order' => 0, 'is_default' => true]);
     $addon = Addon::factory()->create();
     $product->addons()->attach($addon);
 
@@ -69,8 +69,6 @@ test('admin can view an order with its items', function () {
     $order->items()->create([
         'product_id' => null,
         'product_name' => 'Test Cake',
-        'weight_label' => '1 lb',
-        'weight_price' => 800,
         'quantity' => 1,
         'unit_price' => 800,
         'line_total' => 800,
@@ -86,8 +84,6 @@ test('admin can view the order detail page with map, items, and status history',
     $orderItem = $order->items()->create([
         'product_id' => null,
         'product_name' => 'Test Cake',
-        'weight_label' => '1 lb',
-        'weight_price' => 800,
         'quantity' => 1,
         'unit_price' => 800,
         'line_total' => 800,

@@ -47,11 +47,11 @@ new class extends Component
 
     public string $shopAddress = '';
 
-    public float $shopLat = 26.4733808;
+    public float $shopLat = 0.0;
 
-    public float $shopLng = 87.2730507;
+    public float $shopLng = 0.0;
 
-    public string $shopGoogleMapsUrl = 'https://maps.app.goo.gl/XKoEtGptbSXLYm3R7';
+    public string $shopGoogleMapsUrl = '';
 
     public ?int $selectedAddressId = null;
 
@@ -73,7 +73,7 @@ new class extends Component
         $this->deliveryDate = now()->addDay()->toDateString();
         $this->esewaEnabled = (bool) Setting::get('esewa_enabled', false);
         $this->esewaNote = Setting::get('esewa_note');
-        $this->shopAddress = Setting::get('shop_address', 'Bargachhi Chowk, Biratnagar, Nepal');
+        $this->shopAddress = Setting::get('shop_address', 'Store pickup address');
         $this->shopLat = (float) Setting::get('shop_lat', $this->shopLat);
         $this->shopLng = (float) Setting::get('shop_lng', $this->shopLng);
         $this->shopGoogleMapsUrl = Setting::get('shop_google_maps_url', $this->shopGoogleMapsUrl);
@@ -238,12 +238,12 @@ new class extends Component
                     <div class="sm:col-span-2">
                         <label class="text-sm font-medium text-ink/80">Full Name</label>
                         <input type="text" wire:model="customerName" class="mt-1 w-full rounded-xl border border-brand-100 px-3 py-2.5 text-sm focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-200">
-                        @error('customerName') <p class="mt-1 text-xs text-rose-brand-600">{{ $message }}</p> @enderror
+                        @error('customerName') <p class="mt-1 text-xs text-accent-600">{{ $message }}</p> @enderror
                     </div>
                     <div>
                         <label class="text-sm font-medium text-ink/80">Phone Number</label>
                         <input type="tel" wire:model="phone" placeholder="98XXXXXXXX" class="mt-1 w-full rounded-xl border border-brand-100 px-3 py-2.5 text-sm focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-200">
-                        @error('phone') <p class="mt-1 text-xs text-rose-brand-600">{{ $message }}</p> @enderror
+                        @error('phone') <p class="mt-1 text-xs text-accent-600">{{ $message }}</p> @enderror
                     </div>
                     <div>
                         <label class="text-sm font-medium text-ink/80">
@@ -251,7 +251,7 @@ new class extends Component
                             <span class="text-ink/40">{{ $createAccount ? '(required to create an account)' : '(optional)' }}</span>
                         </label>
                         <input type="email" wire:model="email" class="mt-1 w-full rounded-xl border border-brand-100 px-3 py-2.5 text-sm focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-200">
-                        @error('email') <p class="mt-1 text-xs text-rose-brand-600">{{ $message }}</p> @enderror
+                        @error('email') <p class="mt-1 text-xs text-accent-600">{{ $message }}</p> @enderror
                     </div>
                 </div>
             </div>
@@ -264,7 +264,7 @@ new class extends Component
                         <input type="radio" wire:model.live="deliveryMethod" value="delivery" class="text-brand-600 focus:ring-brand-400">
                         <div>
                             <p class="text-sm font-semibold text-ink">🚴 Home Delivery</p>
-                            <p class="text-xs text-ink/60">We deliver to your door across Biratnagar.</p>
+                            <p class="text-xs text-ink/60">We deliver straight to your door.</p>
                         </div>
                     </label>
                     <label class="flex cursor-pointer items-center gap-3 rounded-xl border border-brand-100 p-4 transition has-checked:border-brand-500 has-checked:bg-brand-50">
@@ -296,7 +296,7 @@ new class extends Component
                     <div class="mt-4">
                         <label class="text-sm font-medium text-ink/80">Pickup Date</label>
                         <input type="date" wire:model="deliveryDate" min="{{ now()->toDateString() }}" class="mt-1 w-full rounded-xl border border-brand-100 px-3 py-2.5 text-sm focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-200">
-                        @error('deliveryDate') <p class="mt-1 text-xs text-rose-brand-600">{{ $message }}</p> @enderror
+                        @error('deliveryDate') <p class="mt-1 text-xs text-accent-600">{{ $message }}</p> @enderror
                     </div>
                     <div class="mt-4">
                         <label class="text-sm font-medium text-ink/80">Pickup Time</label>
@@ -345,7 +345,7 @@ new class extends Component
                         <div>
                             <label class="text-sm font-medium text-ink/80">Delivery Address</label>
                             <textarea wire:model="deliveryAddress" rows="2" placeholder="House/street details, or pin your location on the map below" class="mt-1 w-full rounded-xl border border-brand-100 px-3 py-2.5 text-sm focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-200"></textarea>
-                            @error('deliveryAddress') <p class="mt-1 text-xs text-rose-brand-600">{{ $message }}</p> @enderror
+                            @error('deliveryAddress') <p class="mt-1 text-xs text-accent-600">{{ $message }}</p> @enderror
 
                             <div class="mt-3">
                                 <x-map-picker :initial-lat="$deliveryLat ?? $shopLat" :initial-lng="$deliveryLng ?? $shopLng" />
@@ -361,12 +361,12 @@ new class extends Component
                                         <option value="{{ $area->id }}">{{ $area->name }} ({{ $area->fee > 0 ? \App\Support\Money::format($area->fee) : 'Free' }})</option>
                                     @endforeach
                                 </select>
-                                @error('deliveryAreaId') <p class="mt-1 text-xs text-rose-brand-600">{{ $message }}</p> @enderror
+                                @error('deliveryAreaId') <p class="mt-1 text-xs text-accent-600">{{ $message }}</p> @enderror
                             </div>
                             <div>
                                 <label class="text-sm font-medium text-ink/80">Delivery Date</label>
                                 <input type="date" wire:model="deliveryDate" min="{{ now()->toDateString() }}" class="mt-1 w-full rounded-xl border border-brand-100 px-3 py-2.5 text-sm focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-200">
-                                @error('deliveryDate') <p class="mt-1 text-xs text-rose-brand-600">{{ $message }}</p> @enderror
+                                @error('deliveryDate') <p class="mt-1 text-xs text-accent-600">{{ $message }}</p> @enderror
                             </div>
                         </div>
 
@@ -409,7 +409,7 @@ new class extends Component
                             </p>
                         </div>
                     </label>
-                    @error('paymentMethod') <p class="text-xs text-rose-brand-600">{{ $message }}</p> @enderror
+                    @error('paymentMethod') <p class="text-xs text-accent-600">{{ $message }}</p> @enderror
                 </div>
             </div>
 
@@ -424,7 +424,7 @@ new class extends Component
                         <div class="mt-3">
                             <label class="text-sm font-medium text-ink/80">Password</label>
                             <input type="password" wire:model="password" class="mt-1 w-full rounded-xl border border-brand-100 px-3 py-2.5 text-sm focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-200">
-                            @error('password') <p class="mt-1 text-xs text-rose-brand-600">{{ $message }}</p> @enderror
+                            @error('password') <p class="mt-1 text-xs text-accent-600">{{ $message }}</p> @enderror
                         </div>
                     @endif
                 </div>

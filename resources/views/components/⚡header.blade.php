@@ -5,7 +5,7 @@ use Livewire\Component;
 
 new class extends Component
 {
-    public string $shopName = 'BRT Live Cake';
+    public string $shopName = 'ShopKit';
 
     public ?string $phone = null;
 
@@ -15,7 +15,7 @@ new class extends Component
 
     public function mount(): void
     {
-        $this->shopName = Setting::get('shop_name', 'BRT Live Cake');
+        $this->shopName = Setting::get('shop_name', 'ShopKit');
         $this->phone = Setting::get('contact_phone');
         $this->facebookUrl = Setting::get('facebook_url');
         $this->announcementText = Setting::get('announcement_text', 'Same-day delivery available — order today');
@@ -60,11 +60,7 @@ new class extends Component
     >
         <div class="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
             <a href="{{ route('home') }}" wire:navigate class="flex shrink-0 items-center gap-2.5">
-                <img
-                    src="{{ asset('images/logo-circle.png') }}"
-                    alt="{{ $shopName }} logo"
-                    class="h-12 w-12 rounded-full shadow-md shadow-brand-600/20 ring-2 ring-white"
-                >
+                <x-shop-logo :name="$shopName" class="h-12 w-12 text-lg ring-2 ring-white" />
                 <span class="font-display text-lg leading-tight font-semibold text-brand-700 sm:text-xl">
                     {{ $shopName }}
                 </span>
@@ -119,7 +115,7 @@ new class extends Component
                             <a href="{{ route('account.orders') }}" wire:navigate class="block px-4 py-2 text-sm text-ink/80 hover:bg-brand-50 hover:text-brand-600">My Orders</a>
                             <form method="POST" action="{{ route('logout') }}">
                                 @csrf
-                                <button type="submit" class="block w-full px-4 py-2 text-left text-sm text-rose-brand-600 hover:bg-rose-brand-50">Logout</button>
+                                <button type="submit" class="block w-full px-4 py-2 text-left text-sm text-accent-600 hover:bg-accent-50">Logout</button>
                             </form>
                         </div>
                     </div>
@@ -161,7 +157,7 @@ new class extends Component
                 <a href="{{ route('account.orders') }}" wire:navigate class="rounded-lg px-3 py-2 text-sm font-medium text-ink/80 hover:bg-brand-50">My Orders</a>
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
-                    <button type="submit" class="w-full rounded-lg px-3 py-2 text-left text-sm font-medium text-rose-brand-600 hover:bg-rose-brand-50">Logout</button>
+                    <button type="submit" class="w-full rounded-lg px-3 py-2 text-left text-sm font-medium text-accent-600 hover:bg-accent-50">Logout</button>
                 </form>
             @else
                 <a href="{{ route('login') }}" wire:navigate class="rounded-lg px-3 py-2 text-sm font-medium text-ink/80 hover:bg-brand-50">Login</a>

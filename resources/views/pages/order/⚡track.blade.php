@@ -20,7 +20,7 @@ new class extends Component
     public function mount(): void
     {
         if (auth()->check()) {
-            $this->myOrders = auth()->user()->orders()->with(['statusHistories', 'items'])->latest()->get();
+            $this->myOrders = auth()->user()->orders()->with(['statusHistories', 'items.options'])->latest()->get();
         }
     }
 
@@ -32,11 +32,11 @@ new class extends Component
     public function refreshTracking(): void
     {
         if (auth()->check()) {
-            $this->myOrders = auth()->user()->orders()->with(['statusHistories', 'items'])->latest()->get();
+            $this->myOrders = auth()->user()->orders()->with(['statusHistories', 'items.options'])->latest()->get();
         }
 
         if ($this->order) {
-            $this->order = $this->order->fresh(['statusHistories', 'items']);
+            $this->order = $this->order->fresh(['statusHistories', 'items.options']);
         }
     }
 
@@ -64,7 +64,7 @@ new class extends Component
         $this->order = Order::query()
             ->where('order_number', trim($this->orderNumber))
             ->where('phone', trim($this->phone))
-            ->with(['statusHistories', 'items'])
+            ->with(['statusHistories', 'items.options'])
             ->first();
     }
 };
@@ -106,13 +106,13 @@ new class extends Component
     <form wire:submit="search" class="mt-4 flex flex-col gap-4 rounded-2xl border border-brand-100 bg-white p-6 shadow-sm sm:flex-row sm:items-end">
         <div class="flex-1">
             <label class="text-sm font-medium text-ink/80">Order Number</label>
-            <input type="text" wire:model="orderNumber" placeholder="BRT-260819-XXXX" class="mt-1 w-full rounded-xl border border-brand-100 px-3 py-2.5 text-sm focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-200">
-            @error('orderNumber') <p class="mt-1 text-xs text-rose-brand-600">{{ $message }}</p> @enderror
+            <input type="text" wire:model="orderNumber" placeholder="ORD-260819-XXXX" class="mt-1 w-full rounded-xl border border-brand-100 px-3 py-2.5 text-sm focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-200">
+            @error('orderNumber') <p class="mt-1 text-xs text-accent-600">{{ $message }}</p> @enderror
         </div>
         <div class="flex-1">
             <label class="text-sm font-medium text-ink/80">Phone Number</label>
             <input type="tel" wire:model="phone" placeholder="98XXXXXXXX" class="mt-1 w-full rounded-xl border border-brand-100 px-3 py-2.5 text-sm focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-200">
-            @error('phone') <p class="mt-1 text-xs text-rose-brand-600">{{ $message }}</p> @enderror
+            @error('phone') <p class="mt-1 text-xs text-accent-600">{{ $message }}</p> @enderror
         </div>
         <button type="submit" wire:loading.attr="disabled" class="rounded-full bg-brand-600 px-6 py-2.5 text-sm font-semibold text-white shadow-lg transition hover:scale-105 disabled:opacity-60">
             Track

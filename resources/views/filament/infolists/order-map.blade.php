@@ -22,7 +22,7 @@
                     const map = new google.maps.Map(this.$refs.mapEl, {
                         center: position,
                         zoom: 16,
-                        mapId: 'BRT_LIVE_CAKE_ORDER_MAP',
+                        mapId: 'ORDER_MAP',
                         streetViewControl: false,
                         fullscreenControl: false,
                         mapTypeControl: false,

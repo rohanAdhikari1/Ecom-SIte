@@ -39,14 +39,14 @@ new class extends Component
     {
         $this->banners = Banner::query()->active()->orderBy('sort_order')->get();
         $this->categories = Category::query()->where('is_active', true)->orderBy('sort_order')->get();
-        $this->featuredProducts = Product::query()->active()->featured()->with('category')->latest()->take(8)->get();
+        $this->featuredProducts = Product::query()->active()->featured()->with(['category', 'badges'])->latest()->take(8)->get();
         $this->testimonials = Testimonial::query()->active()->orderBy('sort_order')->take(6)->get();
 
-        $this->heroBadgeText = Setting::get('hero_badge_text', "Biratnagar's Own Cake Parlor");
-        $this->storyHeading = Setting::get('story_heading', 'Crafted with Love, Baked with Care');
+        $this->heroBadgeText = Setting::get('hero_badge_text', 'Your Local Favourite');
+        $this->storyHeading = Setting::get('story_heading', 'Crafted with Care, Delivered with Pride');
         $this->storyBody = Setting::get('story_body', '');
         $this->storyStat1Value = Setting::get('story_stat1_value', '500+');
-        $this->storyStat1Label = Setting::get('story_stat1_label', 'Cakes delivered');
+        $this->storyStat1Label = Setting::get('story_stat1_label', 'Orders delivered');
         $this->storyStat2Value = Setting::get('story_stat2_value', '4.9★');
         $this->storyStat2Label = Setting::get('story_stat2_label', 'Average rating');
         $this->whyChooseUs = json_decode(Setting::get('why_choose_us', '[]'), true) ?: [];
@@ -82,13 +82,13 @@ new class extends Component
                         class="h-full w-full object-cover"
                     >
                 @else
-                    <div class="h-full w-full bg-linear-to-br from-brand-700 via-brand-600 to-rose-brand-600"></div>
+                    <div class="h-full w-full bg-linear-to-br from-brand-700 via-brand-600 to-accent-600"></div>
                 @endif
                 <div class="absolute inset-0 bg-linear-to-t from-ink/85 via-ink/40 to-ink/10"></div>
                 <div class="absolute inset-0 bg-linear-to-r from-ink/70 via-ink/10 to-transparent"></div>
             </div>
         @empty
-            <div class="absolute inset-0 bg-linear-to-br from-brand-700 via-brand-600 to-rose-brand-600"></div>
+            <div class="absolute inset-0 bg-linear-to-br from-brand-700 via-brand-600 to-accent-600"></div>
         @endforelse
 
         <div class="relative z-10 mx-auto flex min-h-[86vh] max-w-7xl flex-col justify-end px-4 pb-16 sm:min-h-[92vh] sm:px-6 sm:pb-24 lg:px-8">
@@ -135,8 +135,8 @@ new class extends Component
                 </div>
             @empty
                 <div class="max-w-2xl">
-                    <h1 class="font-display text-4xl leading-[1.05] font-bold text-white sm:text-6xl">Freshly Baked, Delivered with Love</h1>
-                    <p class="mt-5 text-lg text-white/85">Biratnagar's favourite cake shop — order online in minutes.</p>
+                    <h1 class="font-display text-4xl leading-[1.05] font-bold text-white sm:text-6xl">Quality You Can Trust, Delivered with Care</h1>
+                    <p class="mt-5 text-lg text-white/85">Your favourite local shop — order online in minutes.</p>
                     <a href="{{ route('shop') }}" wire:navigate class="mt-8 inline-flex rounded-full bg-white px-7 py-3.5 text-sm font-semibold text-brand-700 shadow-xl transition hover:scale-105">
                         Order Now
                     </a>
@@ -148,7 +148,7 @@ new class extends Component
             <span class="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-brand-100 text-xl">⭐</span>
             <div>
                 <p class="font-display text-sm font-semibold text-ink">{{ $storyStat2Value }} average rating</p>
-                <p class="text-xs text-ink/60">{{ $storyStat1Value }} cakes delivered &amp; counting</p>
+                <p class="text-xs text-ink/60">{{ $storyStat1Value }} orders delivered &amp; counting</p>
             </div>
         </div>
 
@@ -232,13 +232,13 @@ new class extends Component
                 <div class="aspect-4/5 overflow-hidden rounded-4xl shadow-xl">
                     <img
                         src="{{ asset('images/story-baker.jpg') }}"
-                        alt="Baker decorating a fresh cake"
+                        alt="Preparing an order"
                         loading="lazy"
                         class="h-full w-full object-cover transition duration-700 hover:scale-105"
                     >
                 </div>
                 <div class="absolute -bottom-6 -right-4 flex items-center gap-3 rounded-2xl bg-white px-5 py-4 shadow-xl sm:-right-8">
-                    <span class="flex h-11 w-11 items-center justify-center rounded-full bg-brand-100 text-xl">🎂</span>
+                    <span class="flex h-11 w-11 items-center justify-center rounded-full bg-brand-100 text-xl">📦</span>
                     <div>
                         <p class="font-display text-sm font-semibold text-ink">100% Handcrafted</p>
                         <p class="text-xs text-ink/60">Baked fresh, every order</p>
@@ -269,7 +269,7 @@ new class extends Component
     {{-- Why choose us --}}
     <section class="relative overflow-hidden bg-brand-50/60 py-20">
         <div class="absolute -top-24 -left-24 h-72 w-72 rounded-full bg-brand-100/60 blur-3xl"></div>
-        <div class="absolute -bottom-24 -right-24 h-72 w-72 rounded-full bg-rose-brand-100/50 blur-3xl"></div>
+        <div class="absolute -bottom-24 -right-24 h-72 w-72 rounded-full bg-accent-100/50 blur-3xl"></div>
 
         <div class="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div data-reveal class="text-center">
@@ -283,7 +283,7 @@ new class extends Component
                         data-reveal-delay="{{ min($loop->index + 1, 7) }}"
                         class="group rounded-2xl border border-transparent bg-white p-8 text-center shadow-sm transition duration-300 hover:-translate-y-1.5 hover:border-brand-200 hover:shadow-xl"
                     >
-                        <div class="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-linear-to-br from-brand-100 to-rose-brand-100 text-3xl transition duration-300 group-hover:scale-110">
+                        <div class="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-linear-to-br from-brand-100 to-accent-100 text-3xl transition duration-300 group-hover:scale-110">
                             {{ $item['icon'] }}
                         </div>
                         <h3 class="mt-5 font-display text-lg font-semibold text-ink">{{ $item['title'] }}</h3>

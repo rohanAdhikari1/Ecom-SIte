@@ -6,21 +6,22 @@ use App\Models\Category;
 use App\Models\DeliveryArea;
 use App\Models\Order;
 use App\Models\Product;
-use App\Models\ProductFlavorOption;
-use App\Models\ProductWeightOption;
+use App\Models\ProductOptionType;
+use App\Models\ProductOptionValue;
 use App\Models\Setting;
 use Livewire\Livewire;
 
 test('a guest can add a configured product to the cart from the product page', function () {
-    $product = Product::factory()->for(Category::factory())->create(['allows_message' => true]);
-    $weight = ProductWeightOption::factory()->for($product)->create(['price' => 900, 'is_default' => true]);
-    $flavor = ProductFlavorOption::factory()->for($product)->create(['price_modifier' => 100]);
+    $product = Product::factory()->for(Category::factory())->create(['base_price' => 900, 'has_custom_field' => true]);
+    $size = makeSizeValue($product);
+    $flavorType = ProductOptionType::factory()->for($product)->create(['name' => 'Flavor', 'is_required' => false]);
+    $flavor = ProductOptionValue::factory()->for($flavorType, 'optionType')->create(['price_modifier' => 100]);
     $addon = Addon::factory()->create(['price' => 50]);
     $product->addons()->attach($addon);
 
     Livewire::test('pages::product.show', ['product' => $product])
-        ->set('weightOptionId', $weight->id)
-        ->set('flavorOptionId', $flavor->id)
+        ->set("selectedOptionValueIds.{$size->product_option_type_id}", $size->id)
+        ->set("selectedOptionValueIds.{$flavorType->id}", $flavor->id)
         ->set('selectedAddonIds', [$addon->id])
         ->set('message', 'Happy Birthday!')
         ->set('quantity', 2)
@@ -35,12 +36,12 @@ test('a guest can add a configured product to the cart from the product page', f
 test('a guest can complete checkout end to end and reach the confirmation page', function () {
     Setting::query()->create(['key' => 'esewa_enabled', 'value' => '1']);
 
-    $product = Product::factory()->for(Category::factory())->create();
-    $weight = ProductWeightOption::factory()->for($product)->create(['price' => 1200, 'is_default' => true]);
+    $product = Product::factory()->for(Category::factory())->create(['base_price' => 1200]);
+    $size = makeSizeValue($product);
     $area = DeliveryArea::factory()->create(['fee' => 100]);
 
     Livewire::test('pages::product.show', ['product' => $product])
-        ->set('weightOptionId', $weight->id)
+        ->set("selectedOptionValueIds.{$size->product_option_type_id}", $size->id)
         ->call('addToCart');
 
     $checkout = Livewire::test('pages::checkout')

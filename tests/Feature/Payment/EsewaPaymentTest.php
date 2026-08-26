@@ -7,7 +7,8 @@ use App\Enums\PaymentStatus;
 use App\Models\Category;
 use App\Models\Order;
 use App\Models\Product;
-use App\Models\ProductWeightOption;
+use App\Models\ProductOptionType;
+use App\Models\ProductOptionValue;
 use App\Services\Cart\CartService;
 use App\Services\Order\OrderService;
 use App\Services\Payment\EsewaClient;
@@ -15,11 +16,12 @@ use Illuminate\Support\Facades\Http;
 
 function createEsewaOrder(): Order
 {
-    $product = Product::factory()->for(Category::factory())->create();
-    $weight = ProductWeightOption::factory()->for($product)->create(['price' => 1500]);
+    $product = Product::factory()->for(Category::factory())->create(['base_price' => 1500]);
+    $type = ProductOptionType::factory()->for($product)->create(['is_required' => true]);
+    $size = ProductOptionValue::factory()->for($type, 'optionType')->create(['price_modifier' => 0, 'is_default' => true]);
 
     $cart = new CartService;
-    $cart->add($product, $weight, null, [], null, 1);
+    $cart->add($product, [$size->id], [], null, 1);
 
     return (new OrderService($cart))->createFromCart([
         'delivery_method' => DeliveryMethod::Pickup,

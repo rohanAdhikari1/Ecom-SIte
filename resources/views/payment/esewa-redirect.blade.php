@@ -13,7 +13,7 @@
             justify-content: center;
             background: #f4f1ea;
             font-family: system-ui, -apple-system, sans-serif;
-            color: #3d242a;
+            color: #262233;
         }
         .card {
             text-align: center;
@@ -23,14 +23,14 @@
             width: 44px;
             height: 44px;
             margin: 0 auto 1.25rem;
-            border: 3px solid #16767422;
-            border-top-color: #167674;
+            border: 3px solid #4f46e522;
+            border-top-color: #4f46e5;
             border-radius: 50%;
             animation: spin 0.8s linear infinite;
         }
         @keyframes spin { to { transform: rotate(360deg); } }
         p { margin: 0.25rem 0; }
-        .muted { color: #3d242a99; font-size: 0.875rem; }
+        .muted { color: #26223399; font-size: 0.875rem; }
     </style>
 </head>
 <body>

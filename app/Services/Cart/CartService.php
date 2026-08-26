@@ -4,8 +4,7 @@ namespace App\Services\Cart;
 
 use App\Models\Addon;
 use App\Models\Product;
-use App\Models\ProductFlavorOption;
-use App\Models\ProductWeightOption;
+use App\Models\ProductOptionValue;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Str;
@@ -15,51 +14,104 @@ class CartService
     protected const string SESSION_KEY = 'cart';
 
     /**
+     * @param  array<int>  $selectedOptionValueIds  one ProductOptionValue id per option type the customer chose
      * @param  array<int>  $addonIds
      */
     public function add(
         Product $product,
-        ProductWeightOption $weightOption,
-        ?ProductFlavorOption $flavorOption,
+        array $selectedOptionValueIds,
         array $addonIds,
-        ?string $message,
+        ?string $customFieldValue,
         int $quantity,
     ): void {
-        abort_unless($weightOption->product_id === $product->id, 422, 'Invalid weight option for this product.');
-        abort_unless($flavorOption === null || $flavorOption->product_id === $product->id, 422, 'Invalid flavor option for this product.');
+        $optionValues = ProductOptionValue::query()
+            ->whereKey($selectedOptionValueIds)
+            ->whereHas('optionType', fn ($query) => $query->where('product_id', $product->id))
+            ->with('optionType')
+            ->get();
+
+        abort_unless($optionValues->count() === count($selectedOptionValueIds), 422, 'Invalid option selected for this product.');
+
+        $requiredTypeIds = $product->optionTypes()->where('is_required', true)->pluck('id');
+        $selectedTypeIds = $optionValues->pluck('optionType.id');
+        abort_unless($requiredTypeIds->diff($selectedTypeIds)->isEmpty(), 422, 'A required option is missing a selection.');
 
         $addons = $product->addons()->active()->whereKey($addonIds)->get();
 
-        $unitPrice = $weightOption->price
-            + ($flavorOption?->price_modifier ?? 0)
-            + $addons->sum('price');
-
+        // Add-ons (a candle set, gift wrap, ...) are charged once per line,
+        // not per unit — ordering 2 of a product with 1 add-on should charge
+        // the add-on once, not twice. Only the product itself (base price +
+        // selected option modifiers) scales with quantity.
         $item = [
             'id' => (string) Str::uuid(),
             'product_id' => $product->id,
             'product_name' => $product->name,
             'product_slug' => $product->slug,
             'product_image' => $product->cover_image,
-            'weight_option_id' => $weightOption->id,
-            'weight_label' => $weightOption->label,
-            'weight_price' => $weightOption->price,
-            'flavor_option_id' => $flavorOption?->id,
-            'flavor_label' => $flavorOption?->name,
-            'flavor_price_modifier' => $flavorOption?->price_modifier ?? 0,
-            'message_on_cake' => $message,
+            'options' => $optionValues->map(fn (ProductOptionValue $value) => [
+                'type_id' => $value->optionType->id,
+                'type_name' => $value->optionType->name,
+                'value_id' => $value->id,
+                'value_label' => $value->label,
+                'price_modifier' => $value->price_modifier,
+            ])->values()->all(),
+            'custom_field_value' => $customFieldValue,
             'addons' => $addons->map(fn (Addon $addon) => [
                 'id' => $addon->id,
                 'name' => $addon->name,
                 'price' => $addon->price,
             ])->values()->all(),
             'quantity' => max(1, $quantity),
-            'unit_price' => $unitPrice,
+            'unit_price' => $product->base_price + (int) $optionValues->sum('price_modifier'),
+            'addons_total' => (int) $addons->sum('price'),
         ];
 
         $items = $this->rawItems();
         $items[$item['id']] = $item;
 
         $this->putItems($items);
+    }
+
+    /**
+     * @param  array<int>  $addonIds
+     */
+    public function updateAddons(string $lineId, array $addonIds): void
+    {
+        $items = $this->rawItems();
+
+        if (! isset($items[$lineId])) {
+            return;
+        }
+
+        $product = Product::query()->find($items[$lineId]['product_id']);
+        $addons = $product ? $product->addons()->active()->whereKey($addonIds)->get() : collect();
+
+        $items[$lineId]['addons'] = $addons->map(fn (Addon $addon) => [
+            'id' => $addon->id,
+            'name' => $addon->name,
+            'price' => $addon->price,
+        ])->values()->all();
+
+        $items[$lineId]['addons_total'] = (int) $addons->sum('price');
+
+        $this->putItems($items);
+    }
+
+    public function toggleAddon(string $lineId, int $addonId): void
+    {
+        $items = $this->rawItems();
+
+        if (! isset($items[$lineId])) {
+            return;
+        }
+
+        $currentIds = collect($items[$lineId]['addons'])->pluck('id')->all();
+
+        $newIds = in_array($addonId, $currentIds, true)
+            ? array_values(array_diff($currentIds, [$addonId]))
+            : array_merge($currentIds, [$addonId]);
+
+        $this->updateAddons($lineId, $newIds);
     }
 
     public function updateQuantity(string $lineId, int $quantity): void
@@ -97,7 +149,8 @@ class CartService
     public function items(): Collection
     {
         return collect($this->rawItems())->map(function (array $item) {
-            $item['line_total'] = $item['unit_price'] * $item['quantity'];
+            $item['addons_total'] ??= 0;
+            $item['line_total'] = ($item['unit_price'] * $item['quantity']) + $item['addons_total'];
 
             return $item;
         })->values();

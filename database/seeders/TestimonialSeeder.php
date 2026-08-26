@@ -12,17 +12,17 @@ class TestimonialSeeder extends Seeder
         $testimonials = [
             [
                 'name' => 'Sabina R.',
-                'message' => 'Ordered a birthday cake with a custom message and it arrived exactly on time, beautifully packed. Tasted amazing too!',
+                'message' => 'Ordered with a custom note and it arrived exactly on time, beautifully packed. Quality was amazing too!',
                 'rating' => 5,
             ],
             [
                 'name' => 'Prakash T.',
-                'message' => 'Best chocolate cake in Biratnagar. The online ordering was super easy and COD made it even better.',
+                'message' => 'Best shop I\'ve ordered from. The online ordering was super easy and COD made it even better.',
                 'rating' => 5,
             ],
             [
                 'name' => 'Anita M.',
-                'message' => 'Loved the fondant theme cake for my daughter\'s birthday — exactly like the picture we sent!',
+                'message' => 'Loved the fully customised order for my daughter\'s birthday — exactly like the picture we sent!',
                 'rating' => 4,
             ],
         ];

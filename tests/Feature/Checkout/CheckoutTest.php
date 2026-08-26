@@ -6,17 +6,16 @@ use App\Enums\PaymentStatus;
 use App\Models\Category;
 use App\Models\DeliveryArea;
 use App\Models\Product;
-use App\Models\ProductWeightOption;
 use App\Services\Cart\CartService;
 use App\Services\Order\OrderService;
 
 test('checkout creates an order with items, totals, and a tracking token', function () {
-    $product = Product::factory()->for(Category::factory())->create();
-    $weight = ProductWeightOption::factory()->for($product)->create(['price' => 1200]);
+    $product = Product::factory()->for(Category::factory())->create(['base_price' => 1200]);
+    $size = makeSizeValue($product);
     $area = DeliveryArea::factory()->create(['fee' => 100]);
 
     $cart = new CartService;
-    $cart->add($product, $weight, null, [], 'Happy Birthday Sabina', 1);
+    $cart->add($product, [$size->id], [], 'Happy Birthday Sabina', 1);
 
     $order = (new OrderService($cart))->createFromCart([
         'customer_name' => 'Sabina Rai',
@@ -37,15 +36,15 @@ test('checkout creates an order with items, totals, and a tracking token', funct
     expect($order->status)->toBe(OrderStatus::Pending);
     expect($order->payment_status)->toBe(PaymentStatus::Pending);
     expect($order->items)->toHaveCount(1);
-    expect($order->items->first()->message_on_cake)->toBe('Happy Birthday Sabina');
+    expect($order->items->first()->custom_field_value)->toBe('Happy Birthday Sabina');
 });
 
 test('checkout clears the cart afterwards', function () {
     $product = Product::factory()->for(Category::factory())->create();
-    $weight = ProductWeightOption::factory()->for($product)->create();
+    $size = makeSizeValue($product);
 
     $cart = new CartService;
-    $cart->add($product, $weight, null, [], null, 1);
+    $cart->add($product, [$size->id], [], null, 1);
 
     (new OrderService($cart))->createFromCart([
         'customer_name' => 'Test Customer',
@@ -60,10 +59,10 @@ test('checkout clears the cart afterwards', function () {
 
 test('order status history records the initial pending status', function () {
     $product = Product::factory()->for(Category::factory())->create();
-    $weight = ProductWeightOption::factory()->for($product)->create();
+    $size = makeSizeValue($product);
 
     $cart = new CartService;
-    $cart->add($product, $weight, null, [], null, 1);
+    $cart->add($product, [$size->id], [], null, 1);
 
     $order = (new OrderService($cart))->createFromCart([
         'customer_name' => 'Test Customer',

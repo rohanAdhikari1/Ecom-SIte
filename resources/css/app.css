@@ -8,13 +8,12 @@
     --font-display: 'Fredoka', 'Poppins', ui-sans-serif, system-ui, sans-serif;
 
     /*
-     * BRT Live Cake brand palette — anchored on colors sampled directly from
-     * the shop logo (teal ring #167674, rose ring #E45A7B). Tints/shades are
-     * derived with color-mix() so the ramp stays true to the sampled hues
-     * instead of hand-guessed values. To re-skin this codebase for another
-     * shop, swap the two --color-*-base anchors below.
+     * ShopKit brand palette — anchored on two hex values (indigo primary,
+     * amber accent). Tints/shades are derived with color-mix() so the ramp
+     * stays consistent instead of hand-guessed values. To re-skin this
+     * codebase for another brand, swap the two --color-*-base anchors below.
      */
-    --color-brand-base: #167674;
+    --color-brand-base: #4f46e5;
     --color-brand-50: color-mix(in oklch, var(--color-brand-base) 6%, white);
     --color-brand-100: color-mix(in oklch, var(--color-brand-base) 14%, white);
     --color-brand-200: color-mix(in oklch, var(--color-brand-base) 28%, white);
@@ -27,20 +26,20 @@
     --color-brand-900: color-mix(in oklch, var(--color-brand-base) 46%, black);
     --color-brand-950: color-mix(in oklch, var(--color-brand-base) 32%, black);
 
-    --color-rose-brand-base: #e45a7b;
-    --color-rose-brand-50: color-mix(in oklch, var(--color-rose-brand-base) 6%, white);
-    --color-rose-brand-100: color-mix(in oklch, var(--color-rose-brand-base) 14%, white);
-    --color-rose-brand-200: color-mix(in oklch, var(--color-rose-brand-base) 28%, white);
-    --color-rose-brand-300: color-mix(in oklch, var(--color-rose-brand-base) 45%, white);
-    --color-rose-brand-400: color-mix(in oklch, var(--color-rose-brand-base) 70%, white);
-    --color-rose-brand-500: var(--color-rose-brand-base);
-    --color-rose-brand-600: color-mix(in oklch, var(--color-rose-brand-base) 88%, black);
-    --color-rose-brand-700: color-mix(in oklch, var(--color-rose-brand-base) 74%, black);
-    --color-rose-brand-800: color-mix(in oklch, var(--color-rose-brand-base) 60%, black);
-    --color-rose-brand-900: color-mix(in oklch, var(--color-rose-brand-base) 46%, black);
+    --color-accent-base: #f59e0b;
+    --color-accent-50: color-mix(in oklch, var(--color-accent-base) 6%, white);
+    --color-accent-100: color-mix(in oklch, var(--color-accent-base) 14%, white);
+    --color-accent-200: color-mix(in oklch, var(--color-accent-base) 28%, white);
+    --color-accent-300: color-mix(in oklch, var(--color-accent-base) 45%, white);
+    --color-accent-400: color-mix(in oklch, var(--color-accent-base) 70%, white);
+    --color-accent-500: var(--color-accent-base);
+    --color-accent-600: color-mix(in oklch, var(--color-accent-base) 88%, black);
+    --color-accent-700: color-mix(in oklch, var(--color-accent-base) 74%, black);
+    --color-accent-800: color-mix(in oklch, var(--color-accent-base) 60%, black);
+    --color-accent-900: color-mix(in oklch, var(--color-accent-base) 46%, black);
 
     --color-cream: #fdfbf5;
-    --color-ink: #3d242a;
+    --color-ink: #262233;
 }
 
 /* Scroll-reveal entrance animation — see resources/js/app.js */

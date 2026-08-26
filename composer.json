@@ -1,8 +1,8 @@
 {
     "$schema": "https://getcomposer.org/schema.json",
-    "name": "laravel/blank-livewire-starter-kit",
+    "name": "shopkit/shopkit",
     "type": "project",
-    "description": "The official Laravel starter kit for Livewire.",
+    "description": "An open-source, vertical-agnostic ecommerce storefront and admin panel built with Laravel, Livewire, and Filament.",
     "keywords": ["laravel", "framework"],
     "license": "MIT",
     "require": {

@@ -36,7 +36,7 @@ new class extends Component
             x-data="{ show: false }"
             x-init="show = true; setTimeout(() => show = false, 400)"
             :class="show && 'scale-125'"
-            class="absolute -top-0.5 -right-0.5 flex h-5 min-w-5 items-center justify-center rounded-full bg-rose-brand-500 px-1 text-[11px] font-semibold text-white transition-transform duration-300"
+            class="absolute -top-0.5 -right-0.5 flex h-5 min-w-5 items-center justify-center rounded-full bg-accent-500 px-1 text-[11px] font-semibold text-white transition-transform duration-300"
         >
             {{ $count }}
         </span>

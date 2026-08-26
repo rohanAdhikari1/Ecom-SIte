@@ -14,18 +14,15 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property int $order_id
  * @property int|null $product_id
  * @property string $product_name
- * @property string $weight_label
- * @property int $weight_price
- * @property string|null $flavor_label
- * @property int $flavor_price_modifier
- * @property string|null $message_on_cake
+ * @property string|null $custom_field_value
  * @property int $quantity
  * @property int $unit_price
+ * @property int $addons_total
  * @property int $line_total
  */
 #[Fillable([
-    'order_id', 'product_id', 'product_name', 'weight_label', 'weight_price',
-    'flavor_label', 'flavor_price_modifier', 'message_on_cake', 'quantity', 'unit_price', 'line_total',
+    'order_id', 'product_id', 'product_name', 'custom_field_value',
+    'quantity', 'unit_price', 'addons_total', 'line_total',
 ])]
 class OrderItem extends Model
 {
@@ -54,5 +51,13 @@ class OrderItem extends Model
     public function addons(): HasMany
     {
         return $this->hasMany(OrderItemAddon::class);
+    }
+
+    /**
+     * @return HasMany<OrderItemOption, $this>
+     */
+    public function options(): HasMany
+    {
+        return $this->hasMany(OrderItemOption::class);
     }
 }

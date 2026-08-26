@@ -3,13 +3,13 @@
 namespace Database\Factories;
 
 use App\Models\Product;
-use App\Models\ProductWeightOption;
+use App\Models\ProductOptionType;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends Factory<ProductWeightOption>
+ * @extends Factory<ProductOptionType>
  */
-class ProductWeightOptionFactory extends Factory
+class ProductOptionTypeFactory extends Factory
 {
     /**
      * @return array<string, mixed>
@@ -18,10 +18,9 @@ class ProductWeightOptionFactory extends Factory
     {
         return [
             'product_id' => Product::factory(),
-            'label' => fake()->randomElement(['1 lb', '1.5 lb', '2 lb', '3 lb', '5 lb']),
-            'price' => fake()->numberBetween(700, 4500),
+            'name' => fake()->randomElement(['Size', 'Color', 'Material', 'Style']),
             'sort_order' => fake()->numberBetween(0, 5),
-            'is_default' => false,
+            'is_required' => false,
         ];
     }
 }

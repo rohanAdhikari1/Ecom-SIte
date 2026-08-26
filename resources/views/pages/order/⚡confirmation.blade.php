@@ -9,7 +9,7 @@ new class extends Component
 
     public function mount(Order $order): void
     {
-        $this->order = $order->load(['items.addons', 'deliveryArea']);
+        $this->order = $order->load(['items.addons', 'items.options', 'deliveryArea']);
     }
 };
 ?>
@@ -69,14 +69,13 @@ new class extends Component
                     <div>
                         <p class="font-medium text-ink">{{ $item->quantity }} × {{ $item->product_name }}</p>
                         <p class="text-xs text-ink/60">
-                            {{ $item->weight_label }}
-                            @if ($item->flavor_label) &middot; {{ $item->flavor_label }} @endif
+                            {{ $item->options->pluck('option_value_label')->implode(' · ') }}
                         </p>
                         @if ($item->addons->isNotEmpty())
                             <p class="text-xs text-ink/50">+ {{ $item->addons->pluck('addon_name')->implode(', ') }}</p>
                         @endif
-                        @if ($item->message_on_cake)
-                            <p class="text-xs italic text-brand-600">"{{ $item->message_on_cake }}"</p>
+                        @if ($item->custom_field_value)
+                            <p class="text-xs italic text-brand-600">"{{ $item->custom_field_value }}"</p>
                         @endif
                     </div>
                     <span class="font-medium text-ink">{{ \App\Support\Money::format($item->line_total) }}</span>

@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Collection;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 
@@ -21,15 +22,15 @@ use Spatie\MediaLibrary\InteractsWithMedia;
  * @property string $slug
  * @property string|null $description
  * @property int $base_price
- * @property bool $is_eggless
- * @property bool $allows_message
- * @property int $message_max_length
+ * @property bool $has_custom_field
+ * @property string $custom_field_label
+ * @property int $custom_field_max_length
  * @property bool $is_featured
  * @property bool $is_active
  */
 #[Fillable([
     'category_id', 'name', 'slug', 'description', 'base_price',
-    'is_eggless', 'allows_message', 'message_max_length', 'is_featured', 'is_active',
+    'has_custom_field', 'custom_field_label', 'custom_field_max_length', 'is_featured', 'is_active',
 ])]
 class Product extends Model implements HasMedia
 {
@@ -39,8 +40,7 @@ class Product extends Model implements HasMedia
     protected function casts(): array
     {
         return [
-            'is_eggless' => 'boolean',
-            'allows_message' => 'boolean',
+            'has_custom_field' => 'boolean',
             'is_featured' => 'boolean',
             'is_active' => 'boolean',
         ];
@@ -55,19 +55,11 @@ class Product extends Model implements HasMedia
     }
 
     /**
-     * @return HasMany<ProductWeightOption, $this>
+     * @return HasMany<ProductOptionType, $this>
      */
-    public function weightOptions(): HasMany
+    public function optionTypes(): HasMany
     {
-        return $this->hasMany(ProductWeightOption::class)->orderBy('sort_order');
-    }
-
-    /**
-     * @return HasMany<ProductFlavorOption, $this>
-     */
-    public function flavorOptions(): HasMany
-    {
-        return $this->hasMany(ProductFlavorOption::class)->orderBy('sort_order');
+        return $this->hasMany(ProductOptionType::class)->orderBy('sort_order');
     }
 
     /**
@@ -76,6 +68,14 @@ class Product extends Model implements HasMedia
     public function addons(): BelongsToMany
     {
         return $this->belongsToMany(Addon::class, 'product_addon');
+    }
+
+    /**
+     * @return BelongsToMany<ProductBadge, $this>
+     */
+    public function badges(): BelongsToMany
+    {
+        return $this->belongsToMany(ProductBadge::class, 'product_badge');
     }
 
     /**
@@ -119,11 +119,21 @@ class Product extends Model implements HasMedia
         return Attribute::get(fn () => $this->getMedia('gallery')->map->getUrl()->all());
     }
 
-    protected function defaultWeightOption(): Attribute
+    /**
+     * One default ProductOptionValue per option type — the pre-selected
+     * choice shown when a customer first opens the product, keyed by
+     * option type id.
+     *
+     * @return Collection<int, ProductOptionValue>
+     */
+    protected function defaultOptionSelections(): Attribute
     {
         return Attribute::get(function () {
-            return $this->weightOptions->firstWhere('is_default', true)
-                ?? $this->weightOptions->first();
+            return $this->optionTypes->mapWithKeys(function (ProductOptionType $type) {
+                $default = $type->values->firstWhere('is_default', true) ?? $type->values->first();
+
+                return [$type->id => $default];
+            })->filter();
         });
     }
 }

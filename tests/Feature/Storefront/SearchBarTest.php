@@ -9,7 +9,7 @@ test('typing fewer than two characters shows no results', function () {
 
     Livewire::test('search-bar')
         ->set('query', 'b')
-        ->assertSee('Start typing to find your favourite cake');
+        ->assertSee('Start typing to search products');
 });
 
 test('search finds matching active products by name', function () {
@@ -29,7 +29,7 @@ test('search shows an empty state when nothing matches', function () {
 
     Livewire::test('search-bar')
         ->set('query', 'zzz-nonexistent')
-        ->assertSee('No cakes found');
+        ->assertSee('No products found');
 });
 
 test('submitting the search redirects to the shop page with the query', function () {

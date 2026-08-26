@@ -5,15 +5,14 @@ use App\Models\Category;
 use App\Models\DeliveryArea;
 use App\Models\Order;
 use App\Models\Product;
-use App\Models\ProductWeightOption;
 use Livewire\Livewire;
 
 test('a self pickup order has no delivery fee or delivery area', function () {
-    $product = Product::factory()->for(Category::factory())->create();
-    $weight = ProductWeightOption::factory()->for($product)->create(['price' => 900, 'is_default' => true]);
+    $product = Product::factory()->for(Category::factory())->create(['base_price' => 900]);
+    $size = makeSizeValue($product);
 
     Livewire::test('pages::product.show', ['product' => $product])
-        ->set('weightOptionId', $weight->id)
+        ->set("selectedOptionValueIds.{$size->product_option_type_id}", $size->id)
         ->call('addToCart');
 
     Livewire::test('pages::checkout')
@@ -35,11 +34,11 @@ test('a self pickup order has no delivery fee or delivery area', function () {
 });
 
 test('a home delivery order still requires a delivery area', function () {
-    $product = Product::factory()->for(Category::factory())->create();
-    $weight = ProductWeightOption::factory()->for($product)->create(['price' => 900, 'is_default' => true]);
+    $product = Product::factory()->for(Category::factory())->create(['base_price' => 900]);
+    $size = makeSizeValue($product);
 
     Livewire::test('pages::product.show', ['product' => $product])
-        ->set('weightOptionId', $weight->id)
+        ->set("selectedOptionValueIds.{$size->product_option_type_id}", $size->id)
         ->call('addToCart');
 
     Livewire::test('pages::checkout')
@@ -57,12 +56,12 @@ test('a home delivery order still requires a delivery area', function () {
 });
 
 test('a home delivery order applies the delivery area fee', function () {
-    $product = Product::factory()->for(Category::factory())->create();
-    $weight = ProductWeightOption::factory()->for($product)->create(['price' => 900, 'is_default' => true]);
+    $product = Product::factory()->for(Category::factory())->create(['base_price' => 900]);
+    $size = makeSizeValue($product);
     $area = DeliveryArea::factory()->create(['fee' => 150]);
 
     Livewire::test('pages::product.show', ['product' => $product])
-        ->set('weightOptionId', $weight->id)
+        ->set("selectedOptionValueIds.{$size->product_option_type_id}", $size->id)
         ->call('addToCart');
 
     Livewire::test('pages::checkout')

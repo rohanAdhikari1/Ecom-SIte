@@ -66,7 +66,7 @@ class Order extends Model
 
     public static function generateOrderNumber(): string
     {
-        return 'BRT-'.now()->format('ymd').'-'.strtoupper(Str::random(4));
+        return 'ORD-'.now()->format('ymd').'-'.strtoupper(Str::random(4));
     }
 
     protected function casts(): array

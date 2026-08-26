@@ -14,18 +14,18 @@
                 class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
             >
         @else
-            <div class="flex h-full w-full items-center justify-center text-5xl">🎂</div>
+            <div class="flex h-full w-full items-center justify-center text-5xl">🛍️</div>
         @endif
 
         @if ($product->is_featured)
-            <span class="absolute left-3 top-3 rounded-full bg-rose-brand-500 px-3 py-1 text-xs font-semibold text-white shadow-sm">
+            <span class="absolute left-3 top-3 rounded-full bg-accent-500 px-3 py-1 text-xs font-semibold text-white shadow-sm">
                 Bestseller
             </span>
         @endif
 
-        @if ($product->is_eggless)
+        @if ($product->badges->isNotEmpty())
             <span class="absolute right-3 top-3 rounded-full bg-white/90 px-2.5 py-1 text-xs font-medium text-brand-700 shadow-sm">
-                Eggless
+                {{ $product->badges->first()->name }}
             </span>
         @endif
     </div>

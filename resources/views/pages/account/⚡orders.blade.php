@@ -19,7 +19,7 @@ new class extends Component
         <h1 class="font-display text-3xl font-semibold text-ink">My Orders</h1>
         <form method="POST" action="{{ route('logout') }}">
             @csrf
-            <button type="submit" class="text-sm font-medium text-ink/60 hover:text-rose-brand-600">Logout</button>
+            <button type="submit" class="text-sm font-medium text-ink/60 hover:text-accent-600">Logout</button>
         </form>
     </div>
 
