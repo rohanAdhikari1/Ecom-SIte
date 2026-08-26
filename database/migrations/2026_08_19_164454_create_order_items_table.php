@@ -13,13 +13,10 @@ return new class extends Migration
             $table->foreignId('order_id')->constrained()->cascadeOnDelete();
             $table->foreignId('product_id')->nullable()->constrained()->nullOnDelete();
             $table->string('product_name');
-            $table->string('weight_label');
-            $table->unsignedInteger('weight_price');
-            $table->string('flavor_label')->nullable();
-            $table->integer('flavor_price_modifier')->default(0);
-            $table->string('message_on_cake')->nullable();
+            $table->string('custom_field_value')->nullable();
             $table->unsignedInteger('quantity');
             $table->unsignedInteger('unit_price');
+            $table->unsignedInteger('addons_total')->default(0);
             $table->unsignedInteger('line_total');
             $table->timestamps();
         });

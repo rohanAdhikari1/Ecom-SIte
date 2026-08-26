@@ -15,9 +15,9 @@ return new class extends Migration
             $table->string('slug')->unique();
             $table->text('description')->nullable();
             $table->unsignedInteger('base_price');
-            $table->boolean('is_eggless')->default(false);
-            $table->boolean('allows_message')->default(true);
-            $table->unsignedSmallInteger('message_max_length')->default(40);
+            $table->boolean('has_custom_field')->default(true);
+            $table->string('custom_field_label')->default('Special Instructions');
+            $table->unsignedSmallInteger('custom_field_max_length')->default(40);
             $table->boolean('is_featured')->default(false);
             $table->boolean('is_active')->default(true);
             $table->timestamps();

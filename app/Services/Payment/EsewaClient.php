@@ -61,7 +61,7 @@ class EsewaClient
     public function sign(array $fields): string
     {
         $message = collect($fields)
-            ->map(fn($value, $key) => "{$key}={$value}")
+            ->map(fn ($value, $key) => "{$key}={$value}")
             ->implode(',');
 
         return base64_encode(hash_hmac('sha256', $message, $this->secretKey, true));
