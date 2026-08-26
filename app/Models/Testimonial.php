@@ -46,6 +46,9 @@ class Testimonial extends Model implements HasMedia
         $this->addMediaCollection('photo')->singleFile()->useDisk('public');
     }
 
+    /**
+     * @return Attribute<non-falsy-string|null, never>
+     */
     protected function photoUrl(): Attribute
     {
         return Attribute::get(fn () => $this->getFirstMediaUrl('photo') ?: null);

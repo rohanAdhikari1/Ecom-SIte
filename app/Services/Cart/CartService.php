@@ -83,7 +83,7 @@ class CartService
             return;
         }
 
-        $product = Product::query()->find($items[$lineId]['product_id']);
+        $product = Product::query()->find((int) $items[$lineId]['product_id']);
         $addons = $product ? $product->addons()->active()->whereKey($addonIds)->get() : collect();
 
         $items[$lineId]['addons'] = $addons->map(fn (Addon $addon) => [
@@ -105,7 +105,9 @@ class CartService
             return;
         }
 
-        $currentIds = collect($items[$lineId]['addons'])->pluck('id')->all();
+        /** @var array<int, array{id: int, name: string, price: int}> $currentAddons */
+        $currentAddons = $items[$lineId]['addons'];
+        $currentIds = collect($currentAddons)->pluck('id')->all();
 
         $newIds = in_array($addonId, $currentIds, true)
             ? array_values(array_diff($currentIds, [$addonId]))
@@ -148,12 +150,15 @@ class CartService
      */
     public function items(): Collection
     {
-        return collect($this->rawItems())->map(function (array $item) {
+        /** @var Collection<int, array<string, mixed>> $items */
+        $items = collect($this->rawItems())->map(function (array $item) {
             $item['addons_total'] ??= 0;
             $item['line_total'] = ($item['unit_price'] * $item['quantity']) + $item['addons_total'];
 
             return $item;
         })->values();
+
+        return $items;
     }
 
     public function count(): int

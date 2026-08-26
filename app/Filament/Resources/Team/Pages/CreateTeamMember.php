@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Team\Pages;
 
 use App\Filament\Resources\Team\TeamResource;
+use App\Models\User;
 use Filament\Resources\Pages\CreateRecord;
 
 class CreateTeamMember extends CreateRecord
@@ -21,6 +22,9 @@ class CreateTeamMember extends CreateRecord
 
     protected function afterCreate(): void
     {
-        $this->record->syncRoles([$this->selectedRole]);
+        /** @var User $user */
+        $user = $this->record;
+
+        $user->syncRoles([$this->selectedRole]);
     }
 }

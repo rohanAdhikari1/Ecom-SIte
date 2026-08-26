@@ -29,11 +29,11 @@ class OrderService
         $isPickup = $deliveryMethod === DeliveryMethod::Pickup;
 
         $deliveryArea = (! $isPickup && isset($customer['delivery_area_id']))
-            ? DeliveryArea::query()->find($customer['delivery_area_id'])
+            ? DeliveryArea::query()->find((int) $customer['delivery_area_id'])
             : null;
 
         $subtotal = (int) $items->sum('line_total');
-        $deliveryFee = $isPickup ? 0 : ($deliveryArea?->fee ?? 0);
+        $deliveryFee = ($isPickup || $deliveryArea === null) ? 0 : $deliveryArea->fee;
 
         $order = DB::transaction(function () use ($items, $customer, $deliveryMethod, $deliveryArea, $paymentMethod, $subtotal, $deliveryFee) {
             $order = Order::create([

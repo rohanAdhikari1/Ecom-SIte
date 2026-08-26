@@ -17,7 +17,8 @@ class ProductFactory extends Factory
      */
     public function definition(): array
     {
-        $name = ucfirst(fake()->unique()->words(3, true));
+        $words = fake()->unique()->words(3);
+        $name = ucfirst(is_array($words) ? implode(' ', $words) : $words);
 
         return [
             'category_id' => Category::factory(),

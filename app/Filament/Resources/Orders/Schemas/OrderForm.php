@@ -56,7 +56,7 @@ class OrderForm
                         TextEntry::make('delivery_location')
                             ->label('Pinned location')
                             ->columnSpanFull()
-                            ->visible(fn (?Order $record) => $record?->delivery_lat && $record?->delivery_lng)
+                            ->visible(fn (?Order $record) => $record && $record->delivery_lat && $record->delivery_lng)
                             ->state(fn (?Order $record) => $record ? new HtmlString(
                                 '<a href="https://www.google.com/maps/search/?api=1&query='.$record->delivery_lat.','.$record->delivery_lng.'" target="_blank" rel="noopener" class="text-primary-600 underline">📍 View pinned location on map</a>',
                             ) : null),

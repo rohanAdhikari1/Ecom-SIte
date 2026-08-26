@@ -19,11 +19,13 @@ class OrderItemFactory extends Factory
     {
         $unitPrice = fake()->numberBetween(700, 3000);
         $quantity = fake()->numberBetween(1, 2);
+        $words = fake()->words(3);
+        $productName = ucfirst(is_array($words) ? implode(' ', $words) : $words);
 
         return [
             'order_id' => Order::factory(),
             'product_id' => Product::factory(),
-            'product_name' => ucfirst(fake()->words(3, true)),
+            'product_name' => $productName,
             'custom_field_value' => fake()->optional()->words(3, true),
             'quantity' => $quantity,
             'unit_price' => $unitPrice,

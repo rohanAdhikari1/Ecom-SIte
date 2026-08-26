@@ -45,6 +45,9 @@ class Category extends Model implements HasMedia
         $this->addMediaCollection('image')->singleFile()->useDisk('public');
     }
 
+    /**
+     * @return Attribute<non-falsy-string|null, never>
+     */
     protected function image(): Attribute
     {
         return Attribute::get(fn () => $this->getFirstMediaUrl('image') ?: null);

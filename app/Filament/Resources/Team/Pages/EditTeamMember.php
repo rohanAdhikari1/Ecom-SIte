@@ -3,7 +3,9 @@
 namespace App\Filament\Resources\Team\Pages;
 
 use App\Filament\Resources\Team\TeamResource;
+use App\Models\User;
 use Filament\Resources\Pages\EditRecord;
+use Spatie\Permission\Models\Role;
 
 class EditTeamMember extends EditRecord
 {
@@ -13,7 +15,13 @@ class EditTeamMember extends EditRecord
 
     protected function mutateFormDataBeforeFill(array $data): array
     {
-        $data['role'] = $this->record->roles->first()?->name;
+        /** @var User $user */
+        $user = $this->record;
+
+        /** @var Role|null $role */
+        $role = $user->roles->first();
+
+        $data['role'] = $role?->name;
 
         return $data;
     }
@@ -28,6 +36,9 @@ class EditTeamMember extends EditRecord
 
     protected function afterSave(): void
     {
-        $this->record->syncRoles([$this->selectedRole]);
+        /** @var User $user */
+        $user = $this->record;
+
+        $user->syncRoles([$this->selectedRole]);
     }
 }

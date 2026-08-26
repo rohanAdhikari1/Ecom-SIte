@@ -27,6 +27,9 @@ use Spatie\MediaLibrary\InteractsWithMedia;
  * @property int $custom_field_max_length
  * @property bool $is_featured
  * @property bool $is_active
+ * @property-read string|null $cover_image
+ * @property-read array<int, string> $gallery_images
+ * @property-read Collection<int, ProductOptionValue> $default_option_selections
  */
 #[Fillable([
     'category_id', 'name', 'slug', 'description', 'base_price',
@@ -109,11 +112,17 @@ class Product extends Model implements HasMedia
         $this->addMediaCollection('gallery')->useDisk('public');
     }
 
+    /**
+     * @return Attribute<non-falsy-string|null, never>
+     */
     protected function coverImage(): Attribute
     {
         return Attribute::get(fn () => $this->getFirstMediaUrl('gallery') ?: null);
     }
 
+    /**
+     * @return Attribute<array<string>, never>
+     */
     protected function galleryImages(): Attribute
     {
         return Attribute::get(fn () => $this->getMedia('gallery')->map->getUrl()->all());
@@ -124,7 +133,7 @@ class Product extends Model implements HasMedia
      * choice shown when a customer first opens the product, keyed by
      * option type id.
      *
-     * @return Collection<int, ProductOptionValue>
+     * @return Attribute<Collection<int, ProductOptionValue>, never>
      */
     protected function defaultOptionSelections(): Attribute
     {

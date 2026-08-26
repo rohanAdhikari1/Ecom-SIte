@@ -37,7 +37,7 @@ class ManageSettings extends Page
 
     public function mount(): void
     {
-        $this->form->fill([
+        $this->getSchema('form')->fill([
             'shop_name' => Setting::get('shop_name'),
             'shop_tagline' => Setting::get('shop_tagline'),
             'contact_phone' => Setting::get('contact_phone'),
@@ -172,7 +172,7 @@ class ManageSettings extends Page
 
     public function save(): void
     {
-        $data = $this->form->getState();
+        $data = $this->getSchema('form')->getState();
         $data['esewa_enabled'] = $data['esewa_enabled'] ? '1' : '0';
         $data['why_choose_us'] = json_encode(array_values($data['why_choose_us'] ?? []));
 

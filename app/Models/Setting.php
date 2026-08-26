@@ -22,6 +22,9 @@ class Setting extends Model
     /**
      * @var Collection<string, string|null>|null
      */
+    /**
+     * @var Collection<string, string|null>|null
+     */
     protected static ?Collection $cached = null;
 
     public static function get(string $key, mixed $default = null): mixed
